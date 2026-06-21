@@ -2,7 +2,8 @@
 
 **AI-powered browser defense against ClickFix / ClearFake / FakeUpdates social engineering attacks.**
 
-ClickFixed is an on-device cybersecurity shield that stops clipboard-hijacking and DOM-lure attacks at point zero. It combines a proactive **Chrome Extension sensor agent** running in the browser with a multi-step **Cloud Threat Intelligence pipeline** to audit and immunize users in real time.
+ClickFixed was developed as a capstone project for the [Kaggle AI Agents: Intensive Vibe Coding Course](https://www.kaggle.com/). It is an on-device cybersecurity shield that stops clipboard-hijacking and DOM-lure attacks at point zero, combining a proactive **Chrome Extension sensor agent** running in the browser with a multi-step **Cloud Threat Intelligence pipeline** to audit and immunize users in real time.
+
 
 ---
 
