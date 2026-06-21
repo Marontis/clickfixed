@@ -22,32 +22,35 @@ To help developers, researchers, and users understand the architecture of this m
 
 The ClickFixed framework uses a two-tier defense model to ensure security, privacy, and low latency:
 
-```text
-[Chrome Browser Sandbox]
-  Clipboard Hook / DOM Interceptor ──► local Gemini Nano Edge AI
-                                           │
-                        ┌──────────────────┴──────────────────┐
-                        ▼                                     ▼
-             [Malicious: Block write]                [Requires Deep Scan]
-                        │                                     │
-             [Shadow DOM warning alert]               [A2A Telemetry Handoff]
-                                                              │
-                                                              ▼
-                                                    [Cloud Threat Backend]
-                                                              │
-                                                    [Ingestion Layer]
-                                                              │
-                                                    [Security Auditor Agent]
-                                                              │
-                                                    [Privacy Auditor Agent]
-                                                              │
-                                                    [Malware Analyst Agent]
-                                                              │
-                                                    [Threat Intel Synthesizer]
-                                                              │
-                                          ┌───────────────────┼───────────────────┐
-                                          ▼                   ▼                   ▼
-                                 [Firestore via MCP]  [Web Risk Submission]  [Abuse Contact Lookup]
+```mermaid
+graph TD
+    subgraph Browser [Chrome Browser]
+        A["Malicious Site Lure / \n Clipboard Write"] -->|Hooked & Intercepted| B["ClickFixed Extension"]
+        B -->|Plan A: Local Edge AI| C{"Gemini Nano \n available?"}
+        C -->|Yes: 0-latency verdict| D{"Is Malicious?"}
+        C -->|No| E["Plan B: \n Cloud Run Fallback"]
+        D -->|Yes: Block & remove lure| F["Tamper-proof \n Shadow DOM Alert"]
+        D -->|No: Allow write| G["Clipboard Update"]
+        F -->|A2A Telemetry Handoff| E
+    end
+
+    subgraph CloudRun [Cloud Run Threat Intel Backend]
+        E -->|Ingest Payload| H["Security Auditor Agent"]
+        H -->|Check DOM / CSP / Trusted Types| I["Privacy Auditor Agent"]
+        I -->|Audit tracking & PII leakage| J["Malware Analyst Agent"]
+        J -->|De-obfuscate payload scripts| K["Threat Intel Synthesizer"]
+        K -->|Aggregate verdicts & output rules| L{"Is Malware?"}
+        L -->|Yes: Update signatures| M["Save Telemetry & \n Assessments to Firestore"]
+        L -->|No| M
+        K -->|Auto Safe-Browsing Report| N["Google Web Risk API"]
+    end
+
+    style Browser fill:#f5f3ff,stroke:#c084fc,stroke-width:2px,color:#6d28d9
+    style CloudRun fill:#eff6ff,stroke:#93c5fd,stroke-width:2px,color:#1d4ed8
+    classDef edgeAI fill:#e9d5ff,stroke:#a78bfa,stroke-width:2px;
+    classDef cloud fill:#dbeafe,stroke:#60a5fa,stroke-width:2px;
+    class A,B,C,D,E,F,G edgeAI
+    class H,I,J,K,L,M,N cloud
 ```
 
 ### 1. On-Device Sensor Agent (Chrome Extension)
