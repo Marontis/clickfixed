@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Fixed — Test Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090b10;
+      --card-bg: rgba(17, 22, 34, 0.65);
+      --border: rgba(255, 255, 255, 0.08);
+      --primary: #4f46e5;
+      --primary-hover: #6366f1;
+      --danger: #ef4444;
+      --danger-hover: #f87171;
+      --success: #10b981;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --glow-danger: rgba(239, 68, 68, 0.15);
+      --glow-primary: rgba(79, 70, 229, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.05) 0%, transparent 40%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      background: rgba(79, 70, 229, 0.12);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      color: #818cf8;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .description {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .setup-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .setup-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #a5b4fc;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .setup-steps {
+      list-style-type: none;
+      padding-left: 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .setup-steps li {
+      position: relative;
+      padding-left: 1.25rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .setup-steps li::before {
+      content: "•";
+      position: absolute;
+      left: 0.25rem;
+      color: #6366f1;
+      font-weight: bold;
+    }
+
+    .test-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 640px) {
+      .test-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card.primary:hover {
+      border-color: rgba(79, 70, 229, 0.3);
+      box-shadow: 0 10px 25px var(--glow-primary);
+    }
+
+    .card.danger:hover {
+      border-color: rgba(239, 68, 68, 0.3);
+      box-shadow: 0 10px 25px var(--glow-danger);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card.primary .card-title { color: #818cf8; }
+    .card.danger .card-title { color: #f87171; }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.4;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      border: none;
+      color: #fff;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: var(--danger-hover);
+    }
+
+    .status-panel {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .status-dot.active {
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <span class="badge">Simulation Sandbox</span>
+      <h1>Click Fixed Interceptor</h1>
+      <p class="description">Test the extension's ability to intercept DOM clipboard-write operations and classify them using Gemini.</p>
+    </div>
+
+    <div class="setup-box">
+      <div class="setup-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        How to Load & Test:
+      </div>
+      <ul class="setup-steps">
+        <li>Open Chrome and navigate to <code>chrome://extensions</code></li>
+        <li>Enable <strong>"Developer mode"</strong> in the top-right corner.</li>
+        <li>Click <strong>"Load unpacked"</strong> and select the <code>extension</code> folder in this project root.</li>
+        <li>Pin the extension, open this page in Chrome, and click the buttons below.</li>
+      </ul>
+    </div>
+
+    <div class="test-actions">
+      <!-- SAFE TEST -->
+      <div class="card primary">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          Scenario 1: Legitimate Copy
+        </div>
+        <p class="card-desc">Copies normal, safe text to the clipboard. The regex heuristic and Gemini model should evaluate this as <strong>safe</strong>, allowing the write to complete immediately.</p>
+        <button class="btn btn-primary" id="btn-safe-copy">Execute Safe Copy</button>
+      </div>
+
+      <!-- ATTACK TEST -->
+      <div class="card danger">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          Scenario 2: Standard Attack
+        </div>
+        <p class="card-desc">Simulates a malicious script injecting a PowerShell cradle designed to bypass execution policy and download remote malware. The extension should **block** the write and show a warning panel.</p>
+        <button class="btn btn-danger" id="btn-attack">Execute Hijack Attack</button>
+      </div>
+
+      <!-- OBFUSCATED TEST -->
+      <div class="card danger">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Scenario 3: Obfuscation Test
+        </div>
+        <p class="card-desc">Simulates an obfuscated attack payload using carets (<code>c^m^d</code>) and backticks (<code>p`o`w`e`r</code>). Normalization should strip these tricks and flag the threat.</p>
+        <button class="btn btn-danger" id="btn-obfuscated">Execute Obfuscated Attack</button>
+      </div>
+
+      <!-- CLIPBOARDITEM TEST -->
+      <div class="card danger">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+          Scenario 4: ClipboardItem API
+        </div>
+        <p class="card-desc">Attempts to write malicious text using the newer <code>navigator.clipboard.write()</code> API with <code>ClipboardItem</code> blobs, attempting to bypass standard <code>writeText</code> hooks.</p>
+        <button class="btn btn-danger" id="btn-clipboard-item">Execute ClipboardItem Attack</button>
+      </div>
+
+      <!-- PROACTIVE LURE TEST -->
+      <div class="card danger">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+          Scenario 5: Proactive Modal Lure
+        </div>
+        <p class="card-desc">Simulates a dynamic modal injection containing a ClickFix captcha verification lure. The extension's MutationObserver should detect and block it proactively.</p>
+        <button class="btn btn-danger" id="btn-proactive-lure">Inject Proactive Lure</button>
+      </div>
+    </div>
+
+
+    <div class="status-panel">
+      <div class="status-item">
+        <div class="status-dot active"></div>
+        <span>Interception Hook Enabled</span>
+      </div>
+      <div class="status-item">
+        <span style="color: var(--text-muted);">Attribution Script:</span>
+        <code style="color: #a5b4fc; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">malicious_tracker.js</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load our test script to simulate stack trace attribution -->
+  <script src="malicious_tracker.js"></script>
+</body>
+</html>

