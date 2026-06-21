@@ -46,13 +46,9 @@ English
 
 | Permission | Type | Justification |
 |------------|------|---------------|
-| `clipboardRead` | permissions | Required to inspect intercepted clipboard text for potential threat indicators before allowing writes. |
-| `storage` | permissions | Saves user preferences (A2A threat agent URL) and local block counts on the device. |
-| `tabs` | permissions | Allows the background worker to update the badge count and alert status on the extension icon per-tab. |
-| `scripting` | permissions | Injects the clipboard monkey-patch interceptor (`injected.js`) into pages at the earliest possible stage. |
-| `activeTab` | permissions | Grants the extension permissions to access tab contexts when showing the status popup. |
+| `storage` | permissions | Saves user preferences and local block counts on the device. |
 | `alarms` | permissions | Runs a background alarm every hour to sync threat signature regexes from the server. |
-| `host_permissions: <all_urls>` | host_permissions | Clipboard hijacking scripts are dynamically loaded on compromised pages across any domain. Universal access is required for real-time interception. |
+| `host_permissions: <all_urls>` | host_permissions | Clipboard hijacking scripts are dynamically loaded on compromised pages across any domain. Universal access is required for real-time interception and content script injection. |
 
 ## Privacy & Data Use
 
@@ -74,7 +70,7 @@ English
 ## Privacy Policy
 
 **Privacy Policy URL**
-`https://github.com/yourusername/clickfixed/blob/main/PRIVACY.md`
+https://marontis.github.io/clickfixed/PRIVACY.md
 
 ## Distribution
 
@@ -87,7 +83,7 @@ English
 Click Fixed Security Project
 
 **Contact Email**
-security-alerts@clickfixed.example.com
+https://github.com/Marontis/clickfixed/issues
 
 ## Version History
 
