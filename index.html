@@ -1594,7 +1594,13 @@
           </svg>
           Launch Threat Sandbox
         </a>
-        <a href="#playbook" class="btn btn-secondary" id="btn-hero-learn-playbook">Installation Playbook</a>
+        <a href="clickfixed-extension.zip" class="btn btn-secondary" id="btn-hero-download-extension" download>
+          <svg style="width:18px; height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+          </svg>
+          Download ZIP (Dev Mode)
+        </a>
+        <a href="#playbook" class="btn btn-outline" id="btn-hero-learn-playbook">Installation Playbook</a>
         <a href="https://github.com/Marontis/clickfixed" class="btn btn-outline" id="btn-hero-view-source" target="_blank">
           View Source
         </a>
@@ -2065,10 +2071,11 @@
             <h3>Load the Unpacked Chrome Extension</h3>
             <p>The client side of ClickFixed runs as a lightweight Manifest V3 Chrome Extension. To load it locally for development:</p>
             <ol class="playbook-list">
+              <li>Download the compiled <a href="clickfixed-extension.zip" style="color: var(--blue); text-decoration: underline;" download><strong>clickfixed-extension.zip</strong></a> package.</li>
+              <li>Extract the ZIP file contents into a folder on your computer.</li>
               <li>Open Google Chrome and navigate to <code>chrome://extensions/</code>.</li>
               <li>Enable <strong>Developer mode</strong> using the toggle switch in the top-right corner.</li>
-              <li>Click <strong>Load unpacked</strong> in the top-left corner.</li>
-              <li>Select the <code>extension/</code> folder inside the clickfixed workspace directory.</li>
+              <li>Click <strong>Load unpacked</strong> in the top-left corner and select the extracted folder.</li>
             </ol>
             <div class="playbook-info-alert">
               <strong>Note:</strong> Chrome Developer mode allows ClickFixed's content scripts to hook clipboard requests locally without Store publication.
@@ -2123,20 +2130,27 @@
 
       <div class="resources-grid" id="resources-cards-container">
         <!-- Resource 1 -->
+        <a href="clickfixed-extension.zip" class="resource-card" id="card-res-download" download>
+          <div class="resource-meta">Developer Mode</div>
+          <h3>Download Extension ZIP</h3>
+          <p>Download the pre-compiled extension package directly to load unpacked and test ClickFixed locally in Developer Mode.</p>
+          <span class="resource-link">Download clickfixed-extension.zip &rarr;</span>
+        </a>
+        <!-- Resource 2 -->
         <a href="CHROMEWEBSTORE.md" class="resource-card" id="card-res-store" target="_blank">
           <div class="resource-meta">Listing Manual</div>
           <h3>Chrome Web Store Guide</h3>
           <p>Review the store listing documentation, including functional descriptions, target audiences, and privacy policy justifications.</p>
           <span class="resource-link">View CHROMEWEBSTORE.md &rarr;</span>
         </a>
-        <!-- Resource 2 -->
+        <!-- Resource 3 -->
         <a href="https://github.com/Marontis/clickfixed" class="resource-card" id="card-res-git" target="_blank">
           <div class="resource-meta">Open Source</div>
           <h3>Public Git Repository</h3>
           <p>Access the main release code repository, build folder assets, and release tags on the public clickfixed homepage.</p>
           <span class="resource-link">View Repository &rarr;</span>
         </a>
-        <!-- Resource 3 -->
+        <!-- Resource 4 -->
         <a href="README.md" class="resource-card" id="card-res-readme" target="_blank">
           <div class="resource-meta">Project Guide</div>
           <h3>Public README Docs</h3>

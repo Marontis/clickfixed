@@ -75,8 +75,24 @@ ClickFixed is built with privacy by design. The sensor agent strips all query pa
 
 ## 📂 Repository Contents
 This public release package contains:
+*   `clickfixed-extension.zip` — Pre-compiled extension bundle for developer loading.
 *   `presentation.html` — Interactive multi-agent pipeline visualizer.
 *   `test_clickfix.html` — Offline attack simulator testing page.
 *   `malicious_tracker.js` — Client-side simulation script.
 *   `store_assets/` — Chrome Web Store assets and listing graphics.
 *   `CHROMEWEBSTORE.md` — Store permissions and privacy policies.
+
+---
+
+## 📦 Developer Mode Installation
+
+To try ClickFixed locally in Developer Mode without downloading from the Web Store:
+
+1. Download the pre-compiled [clickfixed-extension.zip](clickfixed-extension.zip) archive from this repository.
+2. Extract the contents of the ZIP file to a folder on your computer.
+3. Open Google Chrome and navigate to `chrome://extensions/`.
+4. Turn on the **Developer mode** toggle switch in the top-right corner.
+5. Click the **Load unpacked** button in the top-left corner.
+6. Select the folder where you extracted the ZIP files.
+7. ClickFixed is now running! Test it by visiting our [Local Threat Simulator](https://marontis.github.io/clickfixed/test_clickfix.html).
+
