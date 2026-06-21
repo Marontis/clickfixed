@@ -11,9 +11,9 @@ ClickFixed was developed as a capstone project for the [Kaggle AI Agents: Intens
 
 To help developers, researchers, and users understand the architecture of this multi-agent security pipeline, we have built two interactive client-side simulators included directly in this public repository:
 
-1.  **[Interactive Presentation Dashboard (index.html)](index.html)**:  
+1.  **[Interactive Presentation Dashboard](https://marontis.github.io/clickfixed/)**:  
     A stunning, animated walkthrough demonstrating how a threat payload flows from clipboard interception in the Chrome Sandbox, through local Gemini Nano edge evaluation, and up into the Cloud multi-agent system.
-2.  **[Local Threat Simulator (test_clickfix.html)](test_clickfix.html)**:  
+2.  **[Local Threat Simulator](https://marontis.github.io/clickfixed/test_clickfix.html)**:  
     An offline testing dashboard that lets you trigger simulated clipboard hijack scenarios, Blob items writes, and captcha lure injections to test interception mechanics.
 
 ---
