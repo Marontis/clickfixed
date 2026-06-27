@@ -1082,7 +1082,7 @@
         </div>
         <div class="badge">
           <div class="indicator pulse" style="background-color: var(--blue); box-shadow: 0 0 8px var(--blue);"></div>
-          <span>Cloud Run ADK: <b>Connected</b></span>
+          <span>Agent Platform: <b>Connected</b></span>
         </div>
       </div>
     </header>
@@ -1218,7 +1218,7 @@
           
           <!-- Subgraph Zone Bounds -->
           <div class="graph-zone zone-edge">Browser Sandbox</div>
-          <div class="graph-zone zone-cloud">Cloud Run ADK Pipeline</div>
+          <div class="graph-zone zone-cloud">Agent Platform & Gateway</div>
 
           <!-- SVG Flow link paths -->
           <svg class="svg-flow-network">
@@ -1289,7 +1289,7 @@
               <span class="node-title">Telemetry Ingest</span>
               <span class="node-label-pill label-cloud">A2A API</span>
             </div>
-            <span class="node-subtitle">Cloud Run Entrypoint</span>
+            <span class="node-subtitle">Cloud Run Gateway</span>
           </div>
 
           <!-- Node 4: Security Auditor -->
@@ -1531,7 +1531,7 @@
       },
       ingest: {
         title: "Telemetry Ingestion API",
-        type: "A2A Cloud run endpoint",
+        type: "A2A Gateway endpoint",
         role: "Strips query strings and personal details from culprit url before forwarding threat vector to auditor pipeline.",
         details: "Accepts JSON POST telemetry payload. Verifies authenticity of browser client via origin handshake verification."
       },
@@ -1820,7 +1820,7 @@
         document.getElementById("step-3").classList.add("active");
         document.getElementById("node-ingest").className = "node-card success";
 
-        addConsoleLog("[CLOUD RUN] Telemetry ingest endpoint hit via A2A headers. Sanitizing culprit URL query parameters...", 'info');
+        addConsoleLog("[ADK GATEWAY] Telemetry ingest endpoint hit via A2A headers. Sanitizing culprit URL query parameters...", 'info');
         
         // Path Ingest to Security Auditor
         document.getElementById("link-ingest-security").className.baseVal = "flow-link active";
