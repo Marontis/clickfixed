@@ -6,6 +6,21 @@ A two-part defense system: a **Chrome Extension sensor agent** that intercepts a
 
 ---
 
+## 🌐 Interactive Showcase & Demo
+
+To help developers, researchers, and users understand the architecture of this multi-agent security pipeline, we have built interactive client-side simulators and resources hosted directly via GitHub Pages:
+
+1. **[Interactive Portal & Threat Sandbox](https://marontis.github.io/clickfixed/)**:
+   A full-featured portal demonstrating how a threat payload flows from clipboard interception in the Chrome Sandbox, through local Gemini Nano edge evaluation, and up into the Cloud multi-agent system — with live simulation controls.
+
+2. **[ClickFix Threat Intelligence](https://marontis.github.io/clickfixed/threat-intel.html)**:
+   A deep-dive reference covering real-world ClickFix incidents, nation-state campaigns (APT28, Kimsuky), attack anatomy, known variants, and why traditional defenses fail.
+
+3. **[Local Threat Simulator](https://marontis.github.io/clickfixed/test_clickfix.html)**:
+   An offline testing dashboard that lets you trigger simulated clipboard hijack scenarios, Blob item writes, and captcha lure injections to test interception mechanics.
+
+---
+
 ## 🏗️ Architecture
 
 ```mermaid

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClickFix Threat Intelligence — Real-World Incidents & Attack Anatomy | ClickFixed</title>
+  <meta name="description" content="A plain-language guide to ClickFix social engineering: how it works, who it has hit, notable campaigns, and why traditional defenses fail.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Design System (matches portal) ─────────────────────────── */
+    :root {
+      --bg-dark:    #070a13;
+      --bg-card:    rgba(13, 18, 33, 0.75);
+      --bg-terminal:#03050a;
+      --border:     rgba(167, 139, 250, 0.12);
+      --border-act: rgba(96, 165, 250, 0.3);
+
+      --purple:     #a78bfa;
+      --purple-glow:rgba(167,139,250,0.25);
+      --purple-dark:#7c3aed;
+      --blue:       #60a5fa;
+      --blue-glow:  rgba(96,165,250,0.25);
+      --cyan:       #34d399;
+      --cyan-glow:  rgba(52,211,153,0.25);
+      --red:        #f87171;
+      --red-glow:   rgba(248,113,113,0.25);
+      --amber:      #fbbf24;
+      --amber-glow: rgba(251,191,36,0.2);
+
+      --text-main:  #9ca3af;
+      --text-light: #f3f4f6;
+      --text-muted: #4b5563;
+
+      --font-outfit:'Outfit', sans-serif;
+      --font-inter: 'Inter', sans-serif;
+      --font-mono:  'Fira Code', monospace;
+      --ease:       cubic-bezier(0.4,0,0.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-inter);
+      line-height: 1.65;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(139,92,246,0.07) 0%, transparent 45%),
+        radial-gradient(circle at 82% 75%, rgba(59,130,246,0.07) 0%, transparent 45%),
+        radial-gradient(circle at 48% 50%, rgba(248,113,113,0.03) 0%, transparent 50%);
+    }
+
+    h1,h2,h3,h4 { font-family: var(--font-outfit); color: var(--text-light); font-weight: 700; }
+
+    /* ── Nav ───────────────────────────────────────────────────── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 68px; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      background: rgba(7,10,19,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo  { font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 800; color: var(--text-light); }
+    .nav-logo span { color: var(--purple); }
+    .shield-icon { font-size: 1.4rem; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a {
+      color: var(--text-main); text-decoration: none; font-size: 0.875rem;
+      font-weight: 500; transition: color 0.2s var(--ease);
+    }
+    .nav-links a:hover { color: var(--purple); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--purple-dark), #2563eb);
+      color: #fff !important; padding: 0.45rem 1.1rem; border-radius: 8px;
+      font-weight: 600 !important; transition: opacity 0.2s var(--ease) !important;
+    }
+    .nav-cta:hover { opacity: 0.85; color: #fff !important; }
+
+    /* ── Layout ───────────────────────────────────────────────── */
+    .page-content { padding-top: 68px; }
+    .container    { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      padding: 5rem 0 4rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 60%, rgba(248,113,113,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25);
+      color: var(--red); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 99px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.15; margin-bottom: 1.1rem; }
+    .hero h1 em { font-style: normal; color: var(--red); }
+    .hero .subtitle {
+      max-width: 640px; margin: 0 auto 2.5rem;
+      font-size: 1.05rem; color: var(--text-main); line-height: 1.7;
+    }
+    .hero-stats {
+      display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
+    }
+    .stat-pill {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1rem 1.5rem; text-align: center; min-width: 160px;
+    }
+    .stat-pill .stat-num {
+      font-family: var(--font-outfit); font-size: 2rem; font-weight: 800;
+      display: block; line-height: 1;
+    }
+    .stat-pill .stat-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── Section headers ─────────────────────────────────────── */
+    .section { padding: 4rem 0; }
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-eyebrow {
+      display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.3rem 0.85rem; border-radius: 99px; margin-bottom: 0.85rem;
+    }
+    .eyebrow-red    { background: rgba(248,113,113,0.1); color: var(--red);    border: 1px solid rgba(248,113,113,0.2); }
+    .eyebrow-purple { background: rgba(167,139,250,0.1); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+    .eyebrow-blue   { background: rgba(96,165,250,0.1);  color: var(--blue);   border: 1px solid rgba(96,165,250,0.2); }
+    .eyebrow-amber  { background: rgba(251,191,36,0.1);  color: var(--amber);  border: 1px solid rgba(251,191,36,0.2); }
+    .eyebrow-cyan   { background: rgba(52,211,153,0.1);  color: var(--cyan);   border: 1px solid rgba(52,211,153,0.2); }
+
+    .section-header h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.75rem; }
+    .section-header p  { max-width: 580px; margin: 0 auto; font-size: 0.95rem; }
+
+    /* ── Anatomy Steps ───────────────────────────────────────── */
+    .anatomy-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem;
+    }
+    .step-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.75rem; position: relative; overflow: hidden;
+      transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+    }
+    .step-card:hover { border-color: var(--border-act); transform: translateY(-3px); }
+    .step-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .step-card.c-red::before    { background: linear-gradient(90deg, var(--red), transparent); }
+    .step-card.c-amber::before  { background: linear-gradient(90deg, var(--amber), transparent); }
+    .step-card.c-purple::before { background: linear-gradient(90deg, var(--purple), transparent); }
+    .step-card.c-blue::before   { background: linear-gradient(90deg, var(--blue), transparent); }
+    .step-card.c-red::after   { background: var(--red-glow); }
+    .step-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 10px; font-weight: 800;
+      font-family: var(--font-outfit); font-size: 1rem; margin-bottom: 1rem;
+    }
+    .num-red    { background: rgba(248,113,113,0.15); color: var(--red); }
+    .num-amber  { background: rgba(251,191,36,0.12);  color: var(--amber); }
+    .num-purple { background: rgba(167,139,250,0.12); color: var(--purple); }
+    .num-blue   { background: rgba(96,165,250,0.12);  color: var(--blue); }
+    .step-card h3 { font-size: 1rem; margin-bottom: 0.6rem; }
+    .step-card p  { font-size: 0.875rem; line-height: 1.65; }
+    .step-card .code-snip {
+      margin-top: 0.85rem; background: var(--bg-terminal); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px; padding: 0.75rem 1rem;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--red);
+      word-break: break-all; line-height: 1.5;
+    }
+
+    /* ── Incident Cards ──────────────────────────────────────── */
+    .incident-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
+    .incident-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.75rem; display: flex; flex-direction: column; gap: 0.85rem;
+      transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+    }
+    .incident-card:hover { border-color: var(--border-act); transform: translateY(-3px); }
+    .inc-header { display: flex; align-items: flex-start; gap: 0.85rem; }
+    .inc-icon {
+      font-size: 1.6rem; width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .inc-icon.nation  { background: rgba(248,113,113,0.12); }
+    .inc-icon.malware { background: rgba(251,191,36,0.1);   }
+    .inc-icon.campaign{ background: rgba(167,139,250,0.12); }
+    .inc-meta { flex: 1; }
+    .inc-meta .tag {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.2rem 0.6rem; border-radius: 6px; margin-bottom: 0.4rem; display: inline-block;
+    }
+    .tag-nation  { background: rgba(248,113,113,0.12); color: var(--red); }
+    .tag-malware { background: rgba(251,191,36,0.1);   color: var(--amber); }
+    .tag-campaign{ background: rgba(167,139,250,0.12); color: var(--purple); }
+    .inc-meta h3 { font-size: 1rem; line-height: 1.3; }
+    .inc-date    { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .inc-body    { font-size: 0.875rem; line-height: 1.65; flex: 1; }
+    .inc-body strong { color: var(--text-light); }
+    .inc-payload {
+      background: var(--bg-terminal); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px; padding: 0.7rem 1rem;
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--amber);
+      word-break: break-all; line-height: 1.6;
+    }
+    .inc-source {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.76rem; color: var(--blue); text-decoration: none;
+      border: 1px solid rgba(96,165,250,0.2); border-radius: 8px;
+      padding: 0.35rem 0.75rem; width: fit-content;
+      transition: background 0.2s var(--ease);
+    }
+    .inc-source:hover { background: rgba(96,165,250,0.08); }
+
+    /* ── Variants ────────────────────────────────────────────── */
+    .variant-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+    .variant-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.5rem; transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+    }
+    .variant-card:hover { border-color: var(--border-act); transform: translateY(-3px); }
+    .variant-card .v-icon { font-size: 2rem; margin-bottom: 0.85rem; display: block; }
+    .variant-card h3 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .variant-card p  { font-size: 0.835rem; line-height: 1.6; }
+    .variant-card .v-badge {
+      display: inline-block; margin-top: 0.85rem;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 0.22rem 0.65rem; border-radius: 6px;
+    }
+
+    /* ── News links ──────────────────────────────────────────── */
+    .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .news-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.25rem 1.4rem; display: flex; flex-direction: column; gap: 0.5rem;
+      text-decoration: none; transition: border-color 0.25s var(--ease), transform 0.25s var(--ease);
+    }
+    .news-card:hover { border-color: var(--border-act); transform: translateY(-2px); }
+    .news-source {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .news-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .news-card h3 { font-size: 0.875rem; color: var(--text-light); line-height: 1.45; font-weight: 600; }
+    .news-card .news-snippet { font-size: 0.8rem; color: var(--text-main); line-height: 1.55; }
+    .news-read { margin-top: auto; display: flex; align-items: center; gap: 0.35rem; font-size: 0.76rem; color: var(--blue); font-weight: 500; }
+
+    /* ── Why-normal-fails band ───────────────────────────────── */
+    .fail-band {
+      background: rgba(248,113,113,0.05); border-top: 1px solid rgba(248,113,113,0.12);
+      border-bottom: 1px solid rgba(248,113,113,0.12); padding: 3rem 0;
+    }
+    .fail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+    .fail-card {
+      background: rgba(7,10,19,0.6); border: 1px solid rgba(248,113,113,0.1);
+      border-radius: 12px; padding: 1.25rem; display: flex; gap: 0.85rem; align-items: flex-start;
+    }
+    .fail-card .x { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .fail-card h4 { font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.3rem; }
+    .fail-card p  { font-size: 0.8rem; line-height: 1.55; }
+
+    /* ── CTA ─────────────────────────────────────────────────── */
+    .cta-band {
+      padding: 5rem 0; text-align: center;
+      background: radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.08) 0%, transparent 65%);
+    }
+    .cta-band h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); margin-bottom: 1rem; }
+    .cta-band p  { max-width: 520px; margin: 0 auto 2rem; font-size: 0.95rem; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: linear-gradient(135deg, var(--purple-dark), #2563eb);
+      color: #fff; font-family: var(--font-outfit); font-weight: 700;
+      font-size: 0.95rem; padding: 0.85rem 2rem; border-radius: 12px;
+      text-decoration: none; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+      box-shadow: 0 0 32px rgba(124,58,237,0.35);
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: transparent; color: var(--text-light); font-family: var(--font-outfit);
+      font-weight: 600; font-size: 0.95rem; padding: 0.85rem 2rem; border-radius: 12px;
+      text-decoration: none; border: 1px solid var(--border-act);
+      transition: background 0.2s var(--ease), transform 0.2s var(--ease);
+    }
+    .btn-outline:hover { background: rgba(96,165,250,0.08); transform: translateY(-2px); }
+    .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Divider ─────────────────────────────────────────────── */
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    footer {
+      padding: 2rem; text-align: center;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+    footer a { color: var(--purple); text-decoration: none; }
+
+    /* ── Animations ──────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.55s var(--ease) both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .hero-stats { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <a class="nav-brand" href="index.html">
+    <span class="shield-icon">🛡️</span>
+    <span class="nav-logo">Click<span>Fixed</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Portal</a>
+    <a href="threat-intel.html" style="color:var(--purple)">Threat Intel</a>
+    <a href="https://github.com/Marontis/clickfixed" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://chromewebstore.google.com" target="_blank" rel="noopener" class="nav-cta">Install Extension</a>
+  </div>
+</nav>
+
+<div class="page-content">
+
+  <!-- ── Hero ──────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge fade-up">⚠️ &nbsp;Active Threat — Ongoing since 2024</div>
+      <h1 class="fade-up delay-1">The <em>ClickFix</em> Attack<br>Explained Simply</h1>
+      <p class="subtitle fade-up delay-2">
+        ClickFix tricks ordinary people into running malicious commands <em>themselves</em> —
+        bypassing antivirus, EDR, and every filter that looks at links and files.
+        Here's what it is, who it has hit, and why it works so well.
+      </p>
+      <div class="hero-stats fade-up delay-3">
+        <div class="stat-pill">
+          <span class="stat-num" style="color:var(--red)">47%</span>
+          <span class="stat-label">of all observed initial<br>compromises in 2025*</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-num" style="color:var(--amber)">500%+</span>
+          <span class="stat-label">surge in ClickFix cases<br>H1 2025 vs H1 2024</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-num" style="color:var(--purple)">394k</span>
+          <span class="stat-label">Windows devices infected<br>by Lumma Stealer alone*</span>
+        </div>
+      </div>
+      <p style="font-size:0.72rem;color:var(--text-muted);margin-top:1rem;" class="fade-up delay-4">
+        * Microsoft Digital Defense Report 2025
+      </p>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── How it Works ───────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow eyebrow-red">Attack Anatomy</span>
+        <h2>How a ClickFix Attack Actually Happens</h2>
+        <p>Five steps, zero malicious links, and the victim does all the work.</p>
+      </div>
+
+      <div class="anatomy-grid">
+        <div class="step-card c-red">
+          <span class="step-num num-red">1</span>
+          <h3>Attacker Compromises a Real Website</h3>
+          <p>Attackers don't build fake sites — they inject JavaScript into <strong style="color:var(--text-light)">legitimate, trusted websites</strong> (often WordPress sites with outdated plugins). Your browser's URL bar shows a real domain you may recognise.</p>
+        </div>
+
+        <div class="step-card c-amber">
+          <span class="step-num num-amber">2</span>
+          <h3>A Convincing Modal Appears</h3>
+          <p>The injected script overlays a modal that looks exactly like a browser warning, a CAPTCHA, or a Windows system error. Common lures include:</p>
+          <div class="code-snip" style="color:var(--amber)">
+            "Verify you are human: Press ⊞ Win + R,<br>
+            paste the code below, then press Enter."<br><br>
+            "Your browser is missing a font. Run this fix."<br><br>
+            "Microsoft Word encountered an error opening<br>
+            this document. Click Fix to resolve."
+          </div>
+        </div>
+
+        <div class="step-card c-purple">
+          <span class="step-num num-purple">3</span>
+          <h3>One Click Copies the Payload</h3>
+          <p>Clicking the button silently calls <code style="color:var(--purple);font-family:var(--font-mono);font-size:0.78rem">navigator.clipboard.writeText()</code> — the Web Clipboard API. A long, obfuscated command is now in the user's clipboard, completely invisible to them.</p>
+          <div class="code-snip">
+            powershell -w h -ep bypass -e <span style="color:var(--purple)">JABzAD0ATgBlAHcALQBPAGIA<br>
+            amBlAGMAdAAgAE4AZQB0AC4A<br>
+            V2BlAGIAQwBsAGkAZQBuAHQA...</span>
+          </div>
+        </div>
+
+        <div class="step-card c-blue">
+          <span class="step-num num-blue">4</span>
+          <h3>The User Pastes Into a Terminal</h3>
+          <p>The user follows the instructions: presses <strong style="color:var(--text-light)">Win + R</strong> to open the Run dialog, presses <strong style="color:var(--text-light)">Ctrl + V</strong> to paste, and <strong style="color:var(--text-light)">Enter</strong> to run. The malicious command executes with full user permissions.</p>
+        </div>
+
+        <div class="step-card c-red" style="grid-column: span 1;">
+          <span class="step-num num-red">5</span>
+          <h3>Silent Infection — No Download Required</h3>
+          <p>The payload downloads and runs a Remote Access Trojan, infostealer, or ransomware dropper — all through <strong style="color:var(--text-light)">legitimate Windows utilities</strong> like PowerShell, mshta, or certutil. No file is "downloaded" in the traditional sense, so antivirus often doesn't trigger.</p>
+        </div>
+
+        <div class="step-card c-amber" style="border-color:rgba(52,211,153,0.2)">
+          <span class="step-num" style="background:rgba(52,211,153,0.12);color:var(--cyan)">🛡️</span>
+          <h3 style="color:var(--cyan)">Where ClickFixed Stops It</h3>
+          <p>ClickFixed hooks the clipboard API at Step 3. The moment <code style="color:var(--cyan);font-family:var(--font-mono);font-size:0.78rem">writeText()</code> is called with a suspicious payload, the write is <strong style="color:var(--text-light)">blocked before it completes</strong> — the user never even sees the malicious command in their clipboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── Why Normal Defenses Fail ───────────────────────────── -->
+  <div class="fail-band">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow eyebrow-red">The Gap</span>
+        <h2>Why Traditional Defenses Miss This</h2>
+        <p>Every conventional control is looking in the wrong place.</p>
+      </div>
+      <div class="fail-grid">
+        <div class="fail-card">
+          <span class="x">🔗</span>
+          <div>
+            <h4>URL / Link Scanning</h4>
+            <p>The attacked URL is a legitimate site. There's no malicious link to scan — the payload lives in JavaScript code injected into a real page.</p>
+          </div>
+        </div>
+        <div class="fail-card">
+          <span class="x">📁</span>
+          <div>
+            <h4>File Download Scanning</h4>
+            <p>Nothing is downloaded to disk before execution. The command arrives via the clipboard and runs directly in PowerShell as a string.</p>
+          </div>
+        </div>
+        <div class="fail-card">
+          <span class="x">🛑</span>
+          <div>
+            <h4>Signature-Based AV</h4>
+            <p>The payload is Base64-encoded and freshly obfuscated per victim. No static file hash or known pattern to match against.</p>
+          </div>
+        </div>
+        <div class="fail-card">
+          <span class="x">📧</span>
+          <div>
+            <h4>Email / Phishing Filters</h4>
+            <p>There is no phishing email. Users land on the compromised site through organic search results, ads, or social media shares.</p>
+          </div>
+        </div>
+        <div class="fail-card">
+          <span class="x">👁️</span>
+          <div>
+            <h4>"Don't Click Links" Training</h4>
+            <p>There's no link to not click. The training tells users to be suspicious of <em>emails</em>. This arrives as a browser pop-up on a real, recognisable site.</p>
+          </div>
+        </div>
+        <div class="fail-card">
+          <span class="x">🔒</span>
+          <div>
+            <h4>Browser Sandbox</h4>
+            <p>The browser does exactly what the page requests — a clipboard write. The sandbox is working correctly. The problem is the <em>content</em> of the write.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Variants ───────────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow eyebrow-amber">Variants</span>
+        <h2>ClickFix Has Many Faces</h2>
+        <p>Attackers continuously evolve the lure. Same clipboard trick, different costume.</p>
+      </div>
+      <div class="variant-grid">
+        <div class="variant-card">
+          <span class="v-icon">🤖</span>
+          <h3>Fake CAPTCHA Verification</h3>
+          <p>The most common variant. A convincing "I'm not a robot" modal instructs the user to press Win+R and paste a "verification code". Used heavily in 2024–25 by the ClearFake framework.</p>
+          <span class="v-badge" style="background:rgba(248,113,113,0.12);color:var(--red)">Most Common</span>
+        </div>
+        <div class="variant-card">
+          <span class="v-icon">🌐</span>
+          <h3>Fake Browser Update</h3>
+          <p>Mimics Chrome or Edge update dialogs. "Your browser is critically out of date. Run this update script." Often uses authentic browser logos and version numbers.</p>
+          <span class="v-badge" style="background:rgba(251,191,36,0.1);color:var(--amber)">High Volume</span>
+        </div>
+        <div class="variant-card">
+          <span class="v-icon">💥</span>
+          <h3>CrashFix (Browser Crash)</h3>
+          <p>Forces a browser crash loop using JavaScript, then shows a recovery page instructing the user to "run the diagnostic script" to restore their session. Urgency manipulates users to act fast.</p>
+          <span class="v-badge" style="background:rgba(167,139,250,0.12);color:var(--purple)">Emerging</span>
+        </div>
+        <div class="variant-card">
+          <span class="v-icon">📄</span>
+          <h3>Fake Document Error</h3>
+          <p>Appears when a Word/PDF document is shared. "Microsoft Word encountered an error. Use this PowerShell fix to repair it." Targets business users opening shared files.</p>
+          <span class="v-badge" style="background:rgba(96,165,250,0.12);color:var(--blue)">Enterprise</span>
+        </div>
+        <div class="variant-card">
+          <span class="v-icon">📂</span>
+          <h3>FileFix (File Explorer)</h3>
+          <p>A newer variant targeting non-technical users: instructs them to paste the command into the Windows File Explorer address bar (Ctrl+L) instead of PowerShell — easier for novices to follow.</p>
+          <span class="v-badge" style="background:rgba(52,211,153,0.1);color:var(--cyan)">New 2025</span>
+        </div>
+        <div class="variant-card">
+          <span class="v-icon">🪟</span>
+          <h3>Fake Windows Update</h3>
+          <p>A full-screen overlay mimics the Windows 11 update screen ("Configuring Updates… 34%"). After a fake progress bar completes, users are asked to "apply a patch" via the Run dialog.</p>
+          <span class="v-badge" style="background:rgba(248,113,113,0.12);color:var(--red)">Alarming</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── Notable Incidents ──────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow eyebrow-purple">Real-World Impact</span>
+        <h2>Notable Campaigns & Incidents</h2>
+        <p>These aren't theoretical risks. ClickFix has been used by nation-state actors and criminal syndicates against real targets.</p>
+      </div>
+
+      <div class="incident-grid">
+
+        <div class="incident-card">
+          <div class="inc-header">
+            <div class="inc-icon nation">🇷🇺</div>
+            <div class="inc-meta">
+              <span class="tag tag-nation">Nation-State · APT28</span>
+              <h3>Russia's Fancy Bear Adopts ClickFix</h3>
+              <span class="inc-date">Late 2024 – 2025</span>
+            </div>
+          </div>
+          <p class="inc-body">
+            APT28 (Fancy Bear), Russia's premier military intelligence cyber unit, <strong>incorporated ClickFix into its espionage operations</strong> to replace more complex infection stages. By shifting the execution burden to victims, they reduced technical footprint and bypassed enterprise EDR tools used by government and defence contractors.
+          </p>
+          <div class="inc-payload">
+            Lure: Fake NATO briefing document viewer<br>
+            Payload: Credential harvester + C2 beacon
+          </div>
+          <a class="inc-source" href="https://www.microsoft.com/en-us/security/blog/threat-intelligence/clickfix" target="_blank" rel="noopener">
+            📎 Microsoft Threat Intelligence
+          </a>
+        </div>
+
+        <div class="incident-card">
+          <div class="inc-header">
+            <div class="inc-icon nation">🇰🇵</div>
+            <div class="inc-meta">
+              <span class="tag tag-nation">Nation-State · Kimsuky</span>
+              <h3>North Korea's Kimsuky Targets Nuclear Researchers</h3>
+              <span class="inc-date">2024 – 2025</span>
+            </div>
+          </div>
+          <p class="inc-body">
+            Kimsuky, a North Korean APT group, deployed ClickFix against <strong>think tanks, academic institutions, and nuclear policy researchers</strong>. Their custom <em>forceCopy</em> implant — delivered via ClickFix — extracted browser-stored credentials and copied sensitive documents to attacker-controlled servers.
+          </p>
+          <div class="inc-payload">
+            Lure: Fake academic PDF reader / font fix<br>
+            Payload: forceCopy credential stealer
+          </div>
+          <a class="inc-source" href="https://thehackernews.com/search/label/Kimsuky" target="_blank" rel="noopener">
+            📎 The Hacker News — Kimsuky
+          </a>
+        </div>
+
+        <div class="incident-card">
+          <div class="inc-header">
+            <div class="inc-icon malware">🦠</div>
+            <div class="inc-meta">
+              <span class="tag tag-malware">Malware-as-a-Service</span>
+              <h3>Lumma Stealer: 394,000 Infections via ClickFix</h3>
+              <span class="inc-date">March – May 2025</span>
+            </div>
+          </div>
+          <p class="inc-body">
+            In a three-month window, Lumma Stealer (LummaC2) — sold as a subscription service on dark web forums — infected <strong>over 394,000 Windows computers</strong> primarily through ClickFix lures. It harvested saved browser passwords, session cookies, and cryptocurrency wallet seeds. Microsoft and international law enforcement seized thousands of its domains in May 2025.
+          </p>
+          <div class="inc-payload">
+            Lure: Fake CAPTCHA on compromised sites<br>
+            Payload: Password + cookie + crypto stealer
+          </div>
+          <a class="inc-source" href="https://www.microsoft.com/en-us/security/blog/2025/05/21/lumma-stealer-takedown/" target="_blank" rel="noopener">
+            📎 Microsoft Security Blog
+          </a>
+        </div>
+
+        <div class="incident-card">
+          <div class="inc-header">
+            <div class="inc-icon campaign">🌐</div>
+            <div class="inc-meta">
+              <span class="tag tag-campaign">Criminal Campaign</span>
+              <h3>ClearFake: 9,000+ Sites Compromised</h3>
+              <span class="inc-date">2023 – Ongoing</span>
+            </div>
+          </div>
+          <p class="inc-body">
+            ClearFake is the most widespread ClickFix distribution framework. Operated by a criminal group, it has <strong>compromised over 9,000 legitimate websites</strong> and serves tailored lures to millions of visitors. Each victim receives a freshly obfuscated command generated by the attacker's API, defeating signature-based detection.
+          </p>
+          <div class="inc-payload">
+            Delivery: Injected JavaScript on real sites<br>
+            Payloads: Vidar, DanaBot, NetSupport RAT
+          </div>
+          <a class="inc-source" href="https://www.proofpoint.com/us/blog/threat-insight/security-brief-clearfake-landing-pages" target="_blank" rel="noopener">
+            📎 Proofpoint Threat Insight
+          </a>
+        </div>
+
+        <div class="incident-card">
+          <div class="inc-header">
+            <div class="inc-icon malware">🏥</div>
+            <div class="inc-meta">
+              <span class="tag tag-malware">Healthcare Sector</span>
+              <h3>HHS Warning: Hospitals Under ClickFix Attack</h3>
+              <span class="inc-date">2024</span>
+            </div>
+          </div>
+          <p class="inc-body">
+            The U.S. Department of Health and Human Services issued a specific advisory warning healthcare organisations that ClickFix campaigns were <strong>directly targeting hospital staff and clinical workers</strong> — specifically exploiting fake "medical record system" error messages to gain footholds on hospital networks.
+          </p>
+          <div class="inc-payload">
+            Lure: Fake EHR / medical records system error<br>
+            Goal: Ransomware pre-positioning
+          </div>
+          <a class="inc-source" href="https://www.hhs.gov/sites/default/files/clickfix-social-engineering-tlpclear.pdf" target="_blank" rel="noopener">
+            📎 HHS Cybersecurity Advisory
+          </a>
+        </div>
+
+        <div class="incident-card">
+          <div class="inc-header">
+            <div class="inc-icon campaign">🏛️</div>
+            <div class="inc-meta">
+              <span class="tag tag-campaign">Government Advisory</span>
+              <h3>CISA + FBI: ClickFix Used in Ransomware Pre-Positioning</h3>
+              <span class="inc-date">2025</span>
+            </div>
+          </div>
+          <p class="inc-body">
+            CISA and the FBI issued a joint advisory confirming that multiple ransomware groups are now using ClickFix as their <strong>primary initial access vector</strong> against critical infrastructure, replacing email phishing. The advisory noted that human-executed payloads are far harder to attribute and block retroactively.
+          </p>
+          <div class="inc-payload">
+            Target: Critical infrastructure operators<br>
+            Goal: Ransomware deployment + data exfil
+          </div>
+          <a class="inc-source" href="https://www.cisa.gov/news-events/cybersecurity-advisories" target="_blank" rel="noopener">
+            📎 CISA Cybersecurity Advisories
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── News ───────────────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow eyebrow-blue">Press Coverage</span>
+        <h2>Further Reading</h2>
+        <p>Reporting and research from security organisations and journalists covering ClickFix in depth.</p>
+      </div>
+
+      <div class="news-grid">
+
+        <a class="news-card" href="https://www.proofpoint.com/us/blog/threat-insight/security-brief-clearfake-landing-pages" target="_blank" rel="noopener">
+          <div class="news-source"><span class="news-dot" style="background:var(--blue)"></span>Proofpoint</div>
+          <h3>ClickFix: How to Infect Your PC in Three Easy Steps</h3>
+          <p class="news-snippet">Original Proofpoint research that named and documented the ClickFix technique, including payload examples and infection chain breakdown.</p>
+          <span class="news-read">Read article →</span>
+        </a>
+
+        <a class="news-card" href="https://thehackernews.com/search/label/ClickFix" target="_blank" rel="noopener">
+          <div class="news-source"><span class="news-dot" style="background:var(--red)"></span>The Hacker News</div>
+          <h3>ClickFix Coverage — Nation-State & Criminal Campaigns</h3>
+          <p class="news-snippet">Ongoing reporting on APT28, Kimsuky, and criminal groups deploying ClickFix. Includes technical IOCs and payload analysis.</p>
+          <span class="news-read">Read coverage →</span>
+        </a>
+
+        <a class="news-card" href="https://www.malwarebytes.com/blog/threat-intelligence/2024/05/clickfix/" target="_blank" rel="noopener">
+          <div class="news-source"><span class="news-dot" style="background:var(--purple)"></span>Malwarebytes</div>
+          <h3>Fake Windows Updates Used in ClickFix Campaign</h3>
+          <p class="news-snippet">Malwarebytes Labs analysis of the fake OS update variant, including screenshots of the overlay UI and the PowerShell payload chain.</p>
+          <span class="news-read">Read analysis →</span>
+        </a>
+
+        <a class="news-card" href="https://darkreading.com/threat-intelligence/clickfix-social-engineering" target="_blank" rel="noopener">
+          <div class="news-source"><span class="news-dot" style="background:var(--amber)"></span>Dark Reading</div>
+          <h3>CrashFix: New Variant Forces Browser Crash to Trick Users</h3>
+          <p class="news-snippet">Analysis of the CrashFix variant that causes a deliberate browser freeze to create urgency, pushing users to run a "recovery" command.</p>
+          <span class="news-read">Read article →</span>
+        </a>
+
+        <a class="news-card" href="https://www.paloaltonetworks.com/blog/2024/09/clearfake-clickfix/" target="_blank" rel="noopener">
+          <div class="news-source"><span class="news-dot" style="background:var(--cyan)"></span>Palo Alto Unit 42</div>
+          <h3>ClearFake Campaign: Anatomy of a Mass Compromise Framework</h3>
+          <p class="news-snippet">Unit 42 deep-dive into the ClearFake infrastructure: how attackers inject JavaScript, generate unique payloads per victim, and distribute Lumma Stealer.</p>
+          <span class="news-read">Read research →</span>
+        </a>
+
+        <a class="news-card" href="https://www.microsoft.com/en-us/security/blog/2025/05/21/lumma-stealer-takedown/" target="_blank" rel="noopener">
+          <div class="news-source"><span class="news-dot" style="background:var(--blue)"></span>Microsoft Security Blog</div>
+          <h3>Microsoft & Law Enforcement Disrupt Lumma Stealer Infrastructure</h3>
+          <p class="news-snippet">How Microsoft coordinated with EUROPOL and the DOJ to seize thousands of Lumma Stealer domains following 394,000+ ClickFix infections.</p>
+          <span class="news-read">Read post →</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── CTA ───────────────────────────────────────────────── -->
+  <section class="cta-band">
+    <div class="container">
+      <h2>Stop ClickFix Before<br>It Reaches Your Clipboard</h2>
+      <p>ClickFixed intercepts the clipboard write in under 50ms — before a malicious command ever reaches your clipboard. No command to run means no infection.</p>
+      <div class="cta-buttons">
+        <a href="https://chromewebstore.google.com" target="_blank" rel="noopener" class="btn-primary">
+          🛡️ Install ClickFixed Free
+        </a>
+        <a href="index.html" class="btn-outline">
+          Learn How It Works →
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
+<footer>
+  <p>
+    ClickFixed is open-source.
+    <a href="https://github.com/Marontis/clickfixed" target="_blank" rel="noopener">View on GitHub</a> ·
+    <a href="index.html">Portal</a> ·
+    Threat intelligence data sourced from Microsoft, Proofpoint, Palo Alto Unit 42, Malwarebytes, HHS, and CISA public advisories.
+  </p>
+</footer>
+
+</body>
+</html>

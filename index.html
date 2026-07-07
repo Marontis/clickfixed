@@ -1548,6 +1548,83 @@
     footer a:hover {
       color: var(--purple);
     }
+
+    /* --- Threat Intel TLDR Section --- */
+    .threat-intel-section {
+      background: rgba(248, 113, 113, 0.025);
+      border-top: 1px solid rgba(248, 113, 113, 0.1);
+      border-bottom: 1px solid rgba(248, 113, 113, 0.1);
+    }
+    .ti-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.25);
+      color: var(--red); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 99px;
+      margin-bottom: 1rem; white-space: nowrap;
+    }
+    .ti-stats-row {
+      display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+    .ti-stat {
+      background: rgba(13,18,33,0.7); border: 1px solid rgba(248,113,113,0.15);
+      border-radius: 14px; padding: 1.1rem 1.5rem; text-align: center; min-width: 155px;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .ti-stat:hover { border-color: rgba(248,113,113,0.4); transform: translateY(-3px); }
+    .ti-stat-num {
+      font-family: var(--font-outfit); font-size: 2rem; font-weight: 800;
+      display: block; line-height: 1; margin-bottom: 0.35rem;
+    }
+    .ti-stat-label { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+    .ti-attack-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .ti-step {
+      background: rgba(13,18,33,0.6); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px; padding: 1.25rem 1.25rem 1.25rem 1rem;
+      display: flex; align-items: flex-start; gap: 0.85rem;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .ti-step:hover { border-color: rgba(167,139,250,0.25); transform: translateY(-2px); }
+    .ti-step-num {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-outfit); font-weight: 800; font-size: 0.85rem;
+    }
+    .ti-step h4 { font-family: var(--font-outfit); font-size: 0.85rem; margin-bottom: 0.3rem; color: var(--text-light); }
+    .ti-step p  { font-size: 0.78rem; line-height: 1.55; color: var(--text-main); }
+    .ti-cta-row { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .ti-badge-row {
+      display: flex; gap: 0.65rem; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .ti-badge {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.25rem 0.7rem; border-radius: 6px;
+    }
+    .ti-badge-red    { background: rgba(248,113,113,0.12); color: var(--red);    border: 1px solid rgba(248,113,113,0.2); }
+    .ti-badge-amber  { background: rgba(251,191,36,0.1);   color: #fbbf24;       border: 1px solid rgba(251,191,36,0.2); }
+    .ti-badge-purple { background: rgba(167,139,250,0.12); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+    .ti-read-more {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(248,113,113,0.15), rgba(124,58,237,0.15));
+      border: 1px solid rgba(248,113,113,0.3);
+      color: var(--red); font-family: var(--font-outfit); font-weight: 600;
+      font-size: 0.9rem; padding: 0.75rem 1.75rem; border-radius: 10px;
+      text-decoration: none; transition: all 0.25s ease;
+    }
+    .ti-read-more:hover {
+      background: linear-gradient(135deg, rgba(248,113,113,0.25), rgba(124,58,237,0.25));
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(248,113,113,0.2);
+    }
+    @media (max-width: 600px) {
+      .ti-attack-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -1566,6 +1643,7 @@
         <li><a href="#hero" id="nav-item-hero">Overview</a></li>
         <li><a href="#simulator" id="nav-item-simulator">Threat Sandbox</a></li>
         <li><a href="#features" id="nav-item-features">Capabilities</a></li>
+        <li><a href="#threat-intel" id="nav-item-threat">Threat Intel</a></li>
         <li><a href="#playbook" id="nav-item-playbook">Deployment</a></li>
         <li><a href="#resources" id="nav-item-resources">Resources</a></li>
       </ul>
@@ -2043,6 +2121,94 @@
     </div>
   </section>
 
+  <!-- ClickFix Threat Intelligence TLDR Section -->
+  <section id="threat-intel" class="threat-intel-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="ti-eyebrow">⚠️ Active Threat</span>
+        <h2 class="section-title">What Is a ClickFix Attack?</h2>
+        <p class="section-desc">ClickFix tricks users into running malicious commands themselves — bypassing antivirus, EDR, and every filter that looks at links and files.</p>
+      </div>
+
+      <!-- Stats row -->
+      <div class="ti-stats-row">
+        <div class="ti-stat">
+          <span class="ti-stat-num" style="color:var(--red)">47%</span>
+          <span class="ti-stat-label">of observed initial<br>compromises in 2025</span>
+        </div>
+        <div class="ti-stat">
+          <span class="ti-stat-num" style="color:#fbbf24">500%+</span>
+          <span class="ti-stat-label">surge in cases<br>H1 2025 vs H1 2024</span>
+        </div>
+        <div class="ti-stat">
+          <span class="ti-stat-num" style="color:var(--purple)">394k</span>
+          <span class="ti-stat-label">devices infected by<br>Lumma Stealer alone</span>
+        </div>
+        <div class="ti-stat">
+          <span class="ti-stat-num" style="color:var(--blue)">9,000+</span>
+          <span class="ti-stat-label">legit websites<br>compromised (ClearFake)</span>
+        </div>
+      </div>
+
+      <!-- 5-step attack anatomy (TLDR) -->
+      <div class="ti-attack-row">
+        <div class="ti-step">
+          <div class="ti-step-num" style="background:rgba(248,113,113,0.15);color:var(--red)">1</div>
+          <div>
+            <h4>Legit Site Hijacked</h4>
+            <p>Attackers inject JS into trusted websites. The URL bar shows a domain you recognise.</p>
+          </div>
+        </div>
+        <div class="ti-step">
+          <div class="ti-step-num" style="background:rgba(251,191,36,0.12);color:#fbbf24">2</div>
+          <div>
+            <h4>Convincing Fake Modal</h4>
+            <p>A pop-up mimics a CAPTCHA, browser warning, or Windows error — asking you to run a "fix".</p>
+          </div>
+        </div>
+        <div class="ti-step">
+          <div class="ti-step-num" style="background:rgba(167,139,250,0.12);color:var(--purple)">3</div>
+          <div>
+            <h4>Clipboard Hijacked</h4>
+            <p>One click silently writes a hidden malicious command to your clipboard via <code style="font-family:var(--font-mono);font-size:0.7rem;color:var(--purple)">navigator.clipboard.writeText()</code>.</p>
+          </div>
+        </div>
+        <div class="ti-step">
+          <div class="ti-step-num" style="background:rgba(96,165,250,0.12);color:var(--blue)">4</div>
+          <div>
+            <h4>User Runs the Command</h4>
+            <p>Win + R → Ctrl + V → Enter. The obfuscated PowerShell payload executes with full user permissions.</p>
+          </div>
+        </div>
+        <div class="ti-step">
+          <div class="ti-step-num" style="background:rgba(248,113,113,0.15);color:var(--red)">5</div>
+          <div>
+            <h4>Silent Infection</h4>
+            <p>RATs, infostealers, and ransomware drop through native Windows utilities — no file download, no AV alert.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Known actor badges -->
+      <div class="ti-badge-row">
+        <span class="ti-badge ti-badge-red">🇷🇺 APT28 (Fancy Bear)</span>
+        <span class="ti-badge ti-badge-red">🇰🇵 Kimsuky (DPRK)</span>
+        <span class="ti-badge ti-badge-amber">Lumma Stealer MaaS</span>
+        <span class="ti-badge ti-badge-amber">ClearFake Framework</span>
+        <span class="ti-badge ti-badge-purple">CISA + FBI Advisory</span>
+        <span class="ti-badge ti-badge-purple">HHS Healthcare Warning</span>
+      </div>
+
+      <!-- CTA to full threat intel page -->
+      <div class="ti-cta-row">
+        <a href="threat-intel.html" class="ti-read-more" id="btn-threat-intel-deepdive">
+          ⚡ Full Threat Intel — Real Incidents &amp; Attack Anatomy →
+        </a>
+        <p style="font-size:0.72rem;color:var(--text-muted);text-align:center;width:100%;margin-top:0.75rem;">* Microsoft Digital Defense Report 2025 · Proofpoint · HHS · CISA</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Installation Playbook Section -->
   <section id="playbook" class="playbook-section">
     <div class="container">
@@ -2142,6 +2308,13 @@
           <h3>Public README Docs</h3>
           <p>Read the comprehensive project documentation outlining the system architecture, directory hierarchies, and runtime requirements.</p>
           <span class="resource-link">Read README.md &rarr;</span>
+        </a>
+        <!-- Resource 4 -->
+        <a href="threat-intel.html" class="resource-card" id="card-res-threat-intel" style="border-color: rgba(248,113,113,0.15);">
+          <div class="resource-meta" style="color:var(--red)">⚠️ Threat Intelligence</div>
+          <h3>ClickFix Attack Deep-Dive</h3>
+          <p>Real-world incidents, nation-state campaigns (APT28, Kimsuky), attack anatomy, and why traditional defenses fail against ClickFix.</p>
+          <span class="resource-link" style="color:var(--red)">Read Threat Intel &rarr;</span>
         </a>
       </div>
     </div>
