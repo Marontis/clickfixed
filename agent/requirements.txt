@@ -1,0 +1,10 @@
+google-adk[a2a,mcp]>=1.0.0
+google-generativeai>=0.8.0
+google-cloud-aiplatform>=1.48.0
+httpx>=0.27.0
+python-dotenv>=1.0.0
+uvicorn[standard]>=0.30.0
+mcp>=1.0.0          # MCP Python SDK — used by mcp_server.py (standalone local MCP server)
+# MCP toolset support is included in google-adk[mcp]
+# Firestore access via Firestore MCP server (no firebase-admin SDK needed)
+# On Cloud Run, Application Default Credentials handle auth automatically

@@ -6,20 +6,21 @@ A two-part defense system: a **Chrome Extension sensor agent** that intercepts a
 
 ---
 
-## 🌐 Interactive Showcase & Demo
+## 🎓 Course Criteria Quick Reference
 
-To help developers, researchers, and users understand the architecture of this multi-agent security pipeline, we have built interactive client-side simulators and resources hosted directly via GitHub Pages:
+> Jump directly to the code demonstrating each evaluation criterion.
 
-1. **[Interactive Portal & Threat Sandbox](https://marontis.github.io/clickfixed/)**:
-   A full-featured portal demonstrating how a threat payload flows from clipboard interception in the Chrome Sandbox, through local Gemini Nano edge evaluation, and up into the Cloud multi-agent system — with live simulation controls.
-
-2. **[ClickFix Threat Intelligence](https://marontis.github.io/clickfixed/threat-intel.html)**:
-   A deep-dive reference covering real-world ClickFix incidents, nation-state campaigns (APT28, Kimsuky), attack anatomy, known variants, and why traditional defenses fail.
-
-3. **[Local Threat Simulator](https://marontis.github.io/clickfixed/test_clickfix.html)**:
-   An offline testing dashboard that lets you trigger simulated clipboard hijack scenarios, Blob item writes, and captcha lure injections to test interception mechanics.
+| Criterion | Where to Find It | Key Files |
+|-----------|-----------------|-----------|
+| **Multi-Agent System (ADK)** | 4 specialized ADK `Agent` objects connected in a `Workflow` graph | [`agent/agent.py` L303–509](agent/agent.py) |
+| **MCP Server** | Standalone MCP server exposing 4 Firestore tools + ADK `MCPToolset` integration | [`agent/mcp_server.py`](agent/mcp_server.py) · [`agent/agent.py` L37](agent/agent.py) |
+| **Agent Skills** | 3 domain-specific `SKILL.md` files dynamically injected into agent system prompts | [`agent/skills/`](agent/skills/) · `_load_skill()` at [`agent/agent.py` L91](agent/agent.py) |
+| **Security Features** | Closed Shadow DOM, clipboard API interception, URL sanitization, rate limiting | [`extension/injected.js`](extension/injected.js) · [`extension/warning_ui.js`](extension/warning_ui.js) · [`extension/content_script.js`](extension/content_script.js) |
+| **Deployability** | Full Terraform IaC for GCP + Cloud Run Dockerfile + Vertex AI Agent Engine deploy script | [`infra/main.tf`](infra/main.tf) · [`agent/Dockerfile`](agent/Dockerfile) · [`agent/deploy.py`](agent/deploy.py) |
+| **Antigravity** | Antigravity IDE agent rebuilt JS files, recorded E2E sessions, authored presentation | Video + [`presentation.html`](presentation.html) |
 
 ---
+
 
 ## 🏗️ Architecture
 
@@ -167,7 +168,7 @@ The extension is designed to be completely zero-configuration for end-users. **N
 
 The backend heavy lifting is managed on the **Google Cloud Agent Platform** (using Vertex AI Agent Engine) with an API Gateway proxy hosted on **Cloud Run**.
 
-1.  **Configure Environment**: Add variables to `infra/terraform.tfvars` (using [infra/terraform.tfvars.example](file:///c:/Users/gamer/Documents/Projects/clickfixed-dev/infra/terraform.tfvars.example) as a guide).
+1.  **Configure Environment**: Add variables to `infra/terraform.tfvars` (using [infra/terraform.tfvars.example](infra/terraform.tfvars.example) as a guide).
 2.  **Deploy Infrastructure**: Run Terraform to enable required APIs, provision the Native Firestore database, Artifact Registry, and the GCS staging bucket:
     ```bash
     cd infra

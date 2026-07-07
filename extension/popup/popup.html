@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Fixed — Threat Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="shield-wrap">
+          <img src="../icons/icon128.png" class="shield-img-popup" id="shieldIcon" alt="Click Fixed Logo">
+        </div>
+        <div>
+          <h1 class="brand">Click Fixed</h1>
+          <div class="status-row">
+            <span class="status-dot" id="statusDot"></span>
+            <span class="status-label" id="statusLabel">Protection Active</span>
+          </div>
+        </div>
+      </div>
+      <div class="ai-chip" id="aiChip">
+        <span id="aiChipIcon">⚡</span>
+        <span id="aiChipLabel">Edge AI</span>
+      </div>
+    </header>
+
+    <!-- Stat Cards -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="totalBlocked">0</div>
+        <div class="stat-lbl">Total Blocked</div>
+      </div>
+      <div class="stat-card stat-card--right">
+        <div class="stat-num" id="sessionCount">0</div>
+        <div class="stat-lbl">Last 24 h</div>
+      </div>
+    </section>
+
+    <!-- AI Engine Card -->
+    <div class="section-label">AI Engine</div>
+    <div class="ai-card" id="aiCard">
+      <span class="ai-card-icon" id="aiCardIcon">🧠</span>
+      <div class="ai-card-body">
+        <div class="ai-card-name" id="aiCardName">Detecting…</div>
+        <div class="ai-card-desc" id="aiCardDesc">Checking available AI capabilities</div>
+      </div>
+      <span class="ai-card-dot" id="aiCardDot"></span>
+    </div>
+
+    <!-- Recent Detections -->
+    <div class="section-label">Recent Detections</div>
+    <div class="detections" id="detectionsList">
+      <div class="empty" id="emptyState">
+        <span class="empty-icon">✅</span>
+        <span class="empty-title">All Clear</span>
+        <span class="empty-desc">No threats detected on any tab</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span id="versionText">Click Fixed v1.1.0</span>
+      <span class="dot-sep">·</span>
+      <a href="https://safebrowsing.google.com/safebrowsing/report_badware/" target="_blank" id="reportLink">Report a Site</a>
+    </footer>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

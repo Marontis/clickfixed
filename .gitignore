@@ -1,4 +1,4 @@
-# Secrets — never commit
+# ─── Secrets — NEVER commit ──────────────────────────────────
 .env
 *.env
 *.key
@@ -6,7 +6,22 @@
 *.p12
 secrets/
 
-# Python
+# ─── Terraform ───────────────────────────────────────────────
+# Real variable values — use terraform.tfvars.example instead
+infra/terraform.tfvars
+infra/terraform.tfstate
+infra/terraform.tfstate.backup
+infra/.terraform/
+infra/terraform.exe
+infra/*.tfplan
+
+# ─── GCP credentials ─────────────────────────────────────────
+*.json.key
+service-account*.json
+gcloud-key*.json
+application_default_credentials.json
+
+# ─── Python ──────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
@@ -18,16 +33,18 @@ venv/
 env/
 .Python
 
-# OS
+# ─── OS ──────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# IDE
+# ─── IDE ─────────────────────────────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Extension build artifacts
+# ─── Extension build artifacts ───────────────────────────────
 extension/dist/
+*.zip
+

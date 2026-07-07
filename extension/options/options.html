@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Fixed — Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo-row">
+          <img src="../icons/icon128.png" class="logo-img" alt="Click Fixed Logo">
+          <div>
+            <h1 class="brand">Click Fixed</h1>
+            <p class="brand-sub">Extension Settings</p>
+          </div>
+        </div>
+        <div class="architecture-badge">
+          <span class="arch-dot sensor"></span>
+          <span>Sensor Agent</span>
+          <span class="arch-arrow">↔</span>
+          <span class="arch-dot threat"></span>
+          <span>Threat Intel Agent</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- Section 1: Protection Dashboard -->
+      <section class="section dashboard-card">
+        <div class="dashboard-hero">
+          <div class="shield-display">
+            <img src="../icons/icon128.png" class="shield-img" alt="Click Fixed Shield">
+            <div class="shield-details">
+              <h2 class="shield-title">Click Fixed Protection</h2>
+              <span class="badge-active" id="badgeActive">Active & Shielding</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🛑</div>
+            <div class="stat-info">
+              <span class="stat-val" id="totalBlocked">0</span>
+              <span class="stat-lbl">Blocked Threats</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">☁️</div>
+            <div class="stat-info">
+              <span class="stat-val" id="cloudStatusText">Connecting...</span>
+              <span class="stat-lbl">Threat Cloud</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🧠</div>
+            <div class="stat-info">
+              <span class="stat-val" id="aiModeText">Detecting...</span>
+              <span class="stat-lbl">AI Engine</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Recent Activity -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-icon">📋</span>
+          <div>
+            <h2 class="section-title">Threat Interception Feed</h2>
+            <p class="section-desc">Real-time log of blocked ClickFix social engineering commands attempting to access the clipboard.</p>
+          </div>
+        </div>
+        
+        <div class="activity-feed" id="activityFeed">
+          <div class="empty-state" id="emptyState">
+            <span class="empty-icon">✅</span>
+            <p class="empty-text">Your clipboard is clean. No malicious copy-paste payloads detected.</p>
+          </div>
+        </div>
+      </section>
+
+
+
+    </main>
+
+    <!-- Architecture diagram -->
+    <section class="arch-section">
+      <h3 class="arch-title">How the Two-Agent System Works</h3>
+      <div class="arch-flow">
+        <div class="arch-node sensor-node">
+          <div class="arch-node-icon">🌐</div>
+          <div class="arch-node-label">Compromised Site</div>
+          <div class="arch-node-sub">ClickFix payload</div>
+        </div>
+        <div class="arch-arrow-big">→</div>
+        <div class="arch-node ext-node">
+          <div class="arch-node-icon">🛡️</div>
+          <div class="arch-node-label">Click Fixed</div>
+          <div class="arch-node-sub">Sensor Agent<br><em>Gemini Nano / Cloud</em></div>
+        </div>
+        <div class="arch-arrow-big a2a-arrow">⇄ A2A</div>
+        <div class="arch-node agent-node">
+          <div class="arch-node-icon">🤖</div>
+          <div class="arch-node-label">ADK Agent</div>
+          <div class="arch-node-sub">Threat Intel<br><em>Vertex AI Platform</em></div>
+        </div>
+        <div class="arch-arrow-big">→</div>
+        <div class="arch-node report-node">
+          <div class="arch-node-icon">📋</div>
+          <div class="arch-node-label">Web Risk + Email</div>
+          <div class="arch-node-sub">Google Safe Browsing</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Copy this file to terraform.tfvars and fill in your details
+# DO NOT commit terraform.tfvars containing real keys to version control!
+
+project_id      = "your-gcp-project-id"
+region          = "us-central1"
+gemini_api_key  = "YOUR_GEMINI_API_KEY_FROM_AI_STUDIO"
+webrisk_api_key = "" # Optional: Add your Web Risk API key here if available

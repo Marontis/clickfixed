@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // clickfix_threats — the threat intelligence collection
+    // ─────────────────────────────────────────────────────
+    // All access is DENIED from the web/app clients.
+    // Only the Cloud Run service account (via Admin SDK / Firestore MCP)
+    // can read or write these documents.
+    //
+    // Privacy: documents only contain culprit JS URLs + victim origins.
+    // Never contains full victim URLs, query params, or user identifiers.
+
+    match /clickfix_threats/{docId} {
+      allow read, write: if false;
+    }
+
+    // Deny everything else by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
