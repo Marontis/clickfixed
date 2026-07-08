@@ -5,7 +5,18 @@
 A two-part defense system: a **Chrome Extension sensor agent** that intercepts attacks directly in the browser DOM, and a **Google ADK Multi-Agent Threat Intelligence Pipeline** hosted on the **Google Cloud Agent Platform (Vertex AI Agent Engine)**, fronted by a lightweight **Cloud Run API Gateway** that autonomously proxies and traces threat telemetry.
 
 ---
+⏱️ A Note on Timing
+ClickFixed's first commit landed on **June 21, 2026**.
 
+On **July 2, 2026** — roughly eleven days later — Opera announced [**Paste Protect**](https://blogs.opera.com/news/2026/07/opera-introduces-paste-protect-to-keep-you-safe-from-clipboard-attacks) a native browser feature designed specifically to defend against ClickFix-style clipboard hijacking. Paste Protect monitors clipboard writes, blocks suspicious commands before they reach the user, and surfaces a red security indicator in the address bar — a remarkably similar philosophy to what we had already shipped.
+
+It was covered by BleepingComputer, Engadget, Lifehacker, and gHacks, among others.
+
+We want to be very clear: we have absolutely no way of knowing whether ClickFixed had anything to do with Opera's roadmap. Major browser features take months to design and ship, and the ClickFix threat has been growing for well over a year. The timing is almost certainly a coincidence.
+
+Either way, we think it's a meaningful signal: the security community is converging on the same conclusion we reached — that clipboard interception at the browser layer is the right place to stop these attacks.
+
+---
 ## 🎓 Course Criteria Quick Reference
 
 > Jump directly to the code demonstrating each evaluation criterion.
