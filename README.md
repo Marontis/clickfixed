@@ -8,7 +8,7 @@ A two-part defense system: a **Chrome Extension sensor agent** that intercepts a
 ⏱️ A Note on Timing
 ClickFixed's first commit landed on **June 21, 2026**.
 
-On **July 2, 2026** — roughly eleven days later — Opera announced [**Paste Protect**](https://blogs.opera.com/news/2026/07/opera-launches-paste-protect/) a native browser feature designed specifically to defend against ClickFix-style clipboard hijacking. Paste Protect monitors clipboard writes, blocks suspicious commands before they reach the user, and surfaces a red security indicator in the address bar — a remarkably similar philosophy to what we had already shipped.
+On **July 2, 2026** — roughly eleven days later — Opera announced [**Paste Protect**](https://blogs.opera.com/news/2026/07/opera-introduces-paste-protect-to-keep-you-safe-from-clipboard-attacks) a native browser feature designed specifically to defend against ClickFix-style clipboard hijacking. Paste Protect monitors clipboard writes, blocks suspicious commands before they reach the user, and surfaces a red security indicator in the address bar — a remarkably similar philosophy to what we had already shipped.
 
 It was covered by BleepingComputer, Engadget, Lifehacker, and gHacks, among others.
 
